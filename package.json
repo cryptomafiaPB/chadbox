@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pnpm --filter @chadbox/api run dev",
+    "test:core": "pnpm --filter @chadbox/core run test"
   },
   "keywords": [],
   "author": "",
