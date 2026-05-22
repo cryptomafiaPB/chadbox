@@ -4,6 +4,11 @@ dist
 .pgdata
 .minio
 
+# pnpm
+.pnpm-store
+.pnp.*
+.pnpm-debug.log*
+
 # Test
 test.ts
 test*
