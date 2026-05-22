@@ -2,8 +2,10 @@ FROM node:22-bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Enable pnpm natively
 RUN corepack enable pnpm
 
+# Install minimal dependencies for compiling isolate
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libcap-dev \
@@ -12,8 +14,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsystemd-dev \
     git \
     ca-certificates \
+    uidmap \
     && rm -rf /var/lib/apt/lists/*
 
+# Create the isolate user (required for user namespaces)
+RUN useradd -m isolate
+
+# Clone and compile isolate
 RUN git clone https://github.com/ioi/isolate.git /tmp/isolate \
     && cd /tmp/isolate \
     && make isolate \
@@ -22,5 +29,5 @@ RUN git clone https://github.com/ioi/isolate.git /tmp/isolate \
 
 WORKDIR /app
 
-# (For development phase, we keep it alive. In production, this will be `CMD ["pnpm", "start"]`)
-CMD ["tail", "-f", "/dev/null"]
+# We use sleep infinity to keep the container alive during this core development phase
+CMD ["sleep", "infinity"]

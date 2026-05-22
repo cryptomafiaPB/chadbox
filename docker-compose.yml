@@ -2,7 +2,8 @@ services:
   chadbox-api:
     build: .
     container_name: chadbox_core
-    privileged: true  
+    privileged: true
     volumes:
-      - .:/app        
+      - .:/app
+      # - /sys/fs/cgroup:/sys/fs/cgroup:rw  # Maps the cgroup filesystem securely        
     working_dir: /app
