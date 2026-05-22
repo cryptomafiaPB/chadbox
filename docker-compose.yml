@@ -1,0 +1,8 @@
+services:
+  chadbox-api:
+    build: .
+    container_name: chadbox_core
+    privileged: true  
+    volumes:
+      - .:/app        
+    working_dir: /app
