@@ -4,6 +4,12 @@ dist
 .pgdata
 .minio
 
+# Test
+test.ts
+test*
+coverage
+
+# Environment variables
 .env.local
 .env
 
