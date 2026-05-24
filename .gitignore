@@ -21,3 +21,9 @@ coverage
 .logs/
 
 .claude/
+
+# Ignore all MD (markdown) files except README.md, CONTRIBUTING.md, and .github/ directory
+*.md
+!README.md
+# !CONTRIBUTING.md
+!.github/**
