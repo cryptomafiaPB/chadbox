@@ -1,9 +1,14 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@chadbox/core": ["packages/core/src/index.ts"],
+      "@chadbox/shared": ["packages/shared/src/index.ts"]
+    },
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "NodeNext",
     "lib": ["ES2022"],
-    "moduleResolution": "bundler",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "allowJs": false,
     "strict": true,
@@ -33,6 +38,11 @@
     "useUnknownInCatchVariables": true,
     "types": ["node"]
   },
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/shared" },
+    { "path": "./packages/api" }
+  ],
   "include": ["packages"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

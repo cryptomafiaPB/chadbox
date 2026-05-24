@@ -13,6 +13,7 @@ dist
 test.ts
 test*
 coverage
+*.tsbuildinfo
 
 # Environment variables
 .env.local

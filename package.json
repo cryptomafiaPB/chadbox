@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter @chadbox/api run dev",
+    "start": "pnpm --filter @chadbox/api run start",
     "build": "pnpm -r run build",
     "test": "pnpm --filter @chadbox/core run test",
     "test:core": "pnpm --filter @chadbox/core run test",
