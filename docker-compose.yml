@@ -3,9 +3,16 @@ services:
     build: .
     container_name: chadbox_core
     privileged: true
+    environment:
+      - CI=true
     volumes:
       - .:/app
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      # - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      # tells Docker to keep these folders natively in Linux and NOT sync them to Windows
+      - /app/node_modules
+      - /app/packages/api/node_modules
+      - /app/packages/core/node_modules
+      - /app/packages/shared/node_modules
     working_dir: /app
     command: pnpm run dev
     ports:
