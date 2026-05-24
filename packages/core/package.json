@@ -1,18 +1,28 @@
 {
   "name": "@chadbox/core",
   "version": "1.0.0",
-  "description": "",
+  "description": "Core code execution engine for Chadbox",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "code-execution",
+    "sandbox",
+    "isolate"
+  ],
+  "author": "Chadbox Contributors",
+  "license": "MIT",
   "packageManager": "pnpm@10.33.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cryptomafiaPB/chadbox",
+    "directory": "packages/core"
+  },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "tsx": "^4.22.3",
