@@ -27,8 +27,8 @@ What actually happened?
 ## Environment
 
 - **OS**: (e.g., Windows 10, macOS 12, Ubuntu 22.04)
-- **Node.js Version**: (e.g., 18.0.0)
-- **pnpm Version**: (e.g., 7.0.0)
+- **Node.js Version**: (e.g., 22.0.0)
+- **pnpm Version**: (e.g., 11.0.0)
 - **Chadbox Version**: (e.g., 1.0.0)
 
 ## Additional Context

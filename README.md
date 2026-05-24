@@ -41,7 +41,7 @@ Compared to Piston, Chadbox offers:
 - **Sandboxing:** isolate (system-level), Docker (container-based)
 - **Runtime:** Node.js with Shell scripting
 
-## Quick Start
+<!-- ## Quick Start -->
 
 <!-- ### Installation
 
