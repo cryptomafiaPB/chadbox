@@ -5,16 +5,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Enable pnpm natively
 RUN corepack enable pnpm
 
-# Install minimal dependencies for compiling isolate
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libcap-dev \
-    libseccomp-dev \
-    pkg-config \
-    libsystemd-dev \
-    git \
-    ca-certificates \
-    uidmap \
+    curl build-essential libcap-dev libseccomp-dev pkg-config \
+    libsystemd-dev git uidmap tini \
     && rm -rf /var/lib/apt/lists/*
 
 # Create the isolate user (required for user namespaces)
