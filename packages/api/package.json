@@ -6,9 +6,10 @@
   "main": "dist/server.js",
   "types": "dist/server.d.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "type-check": "tsc --noEmit"
+    "build": "tsc -b tsconfig.build.json",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "type-check": "tsc --noEmit -p tsconfig.check.json"
   },
   "keywords": [
     "code-execution",

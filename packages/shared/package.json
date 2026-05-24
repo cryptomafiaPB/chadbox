@@ -6,8 +6,8 @@
   "type": "module",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc -w",
+    "build": "tsc -b",
+    "dev": "tsc -b -w",
     "type-check": "tsc --noEmit"
   },
   "keywords": [
