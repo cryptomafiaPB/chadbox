@@ -2,9 +2,6 @@ FROM node:22-bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Enable pnpm natively
-RUN corepack enable pnpm
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl build-essential libcap-dev libseccomp-dev pkg-config \
     libsystemd-dev git uidmap tini \
@@ -21,6 +18,12 @@ RUN git clone https://github.com/ioi/isolate.git /tmp/isolate \
     && rm -rf /tmp/isolate
 
 WORKDIR /app
+
+# Enable pnpm natively
+RUN corepack enable pnpm
+
+# Set tini as the absolute PID 1 master process
+ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # We use sleep infinity to keep the container alive during this core development phase
 CMD ["sleep", "infinity"]
