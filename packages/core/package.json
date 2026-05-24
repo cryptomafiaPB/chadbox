@@ -15,9 +15,9 @@
     "sandbox",
     "isolate"
   ],
-  "author": "Chadbox Contributors",
+  "author": "Pranav Bagal @cryptomafiaPB",
   "license": "MIT",
-  "packageManager": "pnpm@10.33.2",
+  "packageManager": "pnpm@11.2.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/cryptomafiaPB/chadbox",
