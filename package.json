@@ -15,7 +15,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{ts,js,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,js,json,md,yml,yaml}\"",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc -b --pretty false",
     "type-check:all": "pnpm -r run type-check",
     "clean": "pnpm -r exec rm -rf dist node_modules .turbo .pnpm-store",
     "prepare": "husky"

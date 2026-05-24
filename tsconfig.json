@@ -43,6 +43,5 @@
     { "path": "./packages/shared" },
     { "path": "./packages/api" }
   ],
-  "include": ["packages"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }
