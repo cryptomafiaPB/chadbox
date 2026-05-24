@@ -5,5 +5,8 @@ services:
     privileged: true
     volumes:
       - .:/app
-      # - /sys/fs/cgroup:/sys/fs/cgroup:rw  # Maps the cgroup filesystem securely        
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
     working_dir: /app
+    command: pnpm run dev
+    ports:
+      - '3000:3000'
