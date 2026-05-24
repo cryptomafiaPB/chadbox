@@ -26,4 +26,6 @@ RUN corepack enable pnpm
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # We use sleep infinity to keep the container alive during this core development phase
-CMD ["sleep", "infinity"]
+# CMD ["sleep", "infinity"]
+
+CMD ["node", "dist/server.js"]
