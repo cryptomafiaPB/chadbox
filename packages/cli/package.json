@@ -1,0 +1,40 @@
+{
+  "name": "@chadbox/cli",
+  "version": "1.0.0",
+  "description": "CLI for Chadbox",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "chad": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -b -w",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "code-execution",
+    "sandbox",
+    "isolate"
+  ],
+  "author": "Pranav Bagal @cryptomafiaPB",
+  "packageManager": "pnpm@11.2.2",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cryptomafiaPB/chadbox",
+    "directory": "packages/cli"
+  },
+  "dependencies": {
+    "@chadbox/core": "workspace:*",
+    "@chadbox/shared": "workspace:*",
+    "commander": "^14.0.3",
+    "ora": "^9.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.22.3",
+    "typescript": "^5.0.0"
+  }
+}
