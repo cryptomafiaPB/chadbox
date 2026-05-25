@@ -28,3 +28,8 @@ coverage
 !README.md
 # !CONTRIBUTING.md
 !.github/**
+
+.excalidraw
+
+# app/language files
+languages

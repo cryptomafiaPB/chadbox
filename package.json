@@ -18,7 +18,8 @@
     "type-check": "tsc -b --pretty false",
     "type-check:all": "pnpm -r run type-check",
     "clean": "pnpm -r exec rm -rf dist node_modules .turbo .pnpm-store",
-    "prepare": "husky"
+    "prepare": "husky",
+    "chad": "tsx packages/cli/src/index.ts"
   },
   "keywords": [
     "code-execution",
@@ -48,6 +49,7 @@
     "husky": "^9.0.0",
     "lint-staged": "^16.0.0",
     "prettier": "^3.3.0",
+    "tsx": "^4.22.3",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.0.0"
   },
