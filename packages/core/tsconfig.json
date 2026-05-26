@@ -1,6 +1,10 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@chadbox/shared": ["../shared/src/index.ts"]
+    },
     // File Layout
     "rootDir": "./src",
     "outDir": "./dist",
@@ -43,5 +47,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
+  "references": [{ "path": "../shared" }],
   "include": ["src/**/*"]
 }
