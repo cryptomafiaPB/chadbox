@@ -16,6 +16,13 @@ fastify.post('/api/v1/execute', async (request, reply) => {
 
   const payload = parsed.data;
 
+  // Only allow lowercase letters, numbers, and hyphens for language identifiers
+  if (!/^[a-z0-9-]+$/.test(payload.language)) {
+    return reply
+      .status(400)
+      .send({ error: 'Invalid language identifier. Malicious path detected.' });
+  }
+
   // DYNAMIC LANGUAGE RESOLUTION
   const langJsonPath = path.join('/app/languages', `${payload.language}.json`);
   const sqshPath = path.join('/app/languages', `${payload.language}.sqsh`);
