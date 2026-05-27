@@ -14,7 +14,8 @@ services:
             - chadbox_shared_node_modules:/app/packages/shared/node_modules
             - chadbox_cli_node_modules:/app/packages/cli/node_modules
         working_dir: /app
-        command: sh -c "pnpm install --frozen-lockfile && pnpm run dev"
+        # Setup command that creates wrapper script 'chad' to run the CLI from the host, and then starts the development server.
+        command: sh -c "echo '#!/bin/sh\npnpm --filter @chadbox/cli run start \"$$@\"' > /usr/local/bin/chad && chmod +x /usr/local/bin/chad && pnpm install --frozen-lockfile && pnpm run dev"
         ports:
             - '3000:3000'
 
