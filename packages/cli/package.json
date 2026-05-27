@@ -6,11 +6,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "chad": "dist/index.js"
+    "chad": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc -b -w",
+    "start": "tsx src/index.ts",
     "type-check": "tsc --noEmit"
   },
   "keywords": [
@@ -30,7 +31,8 @@
     "@chadbox/core": "workspace:*",
     "@chadbox/shared": "workspace:*",
     "commander": "^14.0.3",
-    "ora": "^9.4.0"
+    "ora": "^9.4.0",
+    "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

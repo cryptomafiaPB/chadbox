@@ -33,3 +33,6 @@ coverage
 
 # app/language files
 languages
+
+# Tests
+**/__tests__/**

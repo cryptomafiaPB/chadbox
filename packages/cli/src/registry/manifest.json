@@ -1,0 +1,24 @@
+{
+  "python3": {
+    "name": "Python 3",
+    "default_version": "3.10.13",
+    "versions": {
+      "3.10.13": {
+        "url": "https://github.com/indygreg/python-build-standalone/releases/download/20240107/cpython-3.10.13+20240107-x86_64-unknown-linux-gnu-install_only.tar.gz",
+        "extractFolder": "python",
+        "executable": "/opt/python3/bin/python3"
+      }
+    }
+  },
+  "nodejs": {
+    "name": "Node.js",
+    "default_version": "20.11.0",
+    "versions": {
+      "20.11.0": {
+        "url": "https://nodejs.org/dist/v20.11.0/node-v20.11.0-linux-x64.tar.xz",
+        "extractFolder": "node-v20.11.0-linux-x64",
+        "executable": "/opt/nodejs/bin/node"
+      }
+    }
+  }
+}
