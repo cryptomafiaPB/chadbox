@@ -1,10 +1,10 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "composite": false,
-    "declaration": false,
-    "declarationMap": false
-  },
-  "references": [],
-  "include": ["src/**/*"]
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "composite": false,
+        "declaration": false,
+        "declarationMap": false
+    },
+    "references": [],
+    "include": ["src/**/*"]
 }

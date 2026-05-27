@@ -1,34 +1,34 @@
 {
-  "name": "@chadbox/core",
-  "version": "1.0.0",
-  "description": "Core code execution engine for Chadbox",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
-  "scripts": {
-    "build": "tsc -b",
-    "dev": "tsc -b -w",
-    "type-check": "tsc --noEmit"
-  },
-  "keywords": [
-    "code-execution",
-    "sandbox",
-    "isolate"
-  ],
-  "author": "Pranav Bagal @cryptomafiaPB",
-  "license": "MIT",
-  "packageManager": "pnpm@11.2.2",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cryptomafiaPB/chadbox",
-    "directory": "packages/core"
-  },
-  "dependencies": {
-    "@chadbox/shared": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "tsx": "^4.22.3",
-    "typescript": "^5.0.0"
-  }
+    "name": "@chadbox/core",
+    "version": "1.0.0",
+    "description": "Core code execution engine for Chadbox",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "type": "module",
+    "scripts": {
+        "build": "tsc -b",
+        "dev": "tsc -b -w",
+        "type-check": "tsc --noEmit"
+    },
+    "keywords": [
+        "code-execution",
+        "sandbox",
+        "isolate"
+    ],
+    "author": "Pranav Bagal @cryptomafiaPB",
+    "license": "MIT",
+    "packageManager": "pnpm@11.2.2",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cryptomafiaPB/chadbox",
+        "directory": "packages/core"
+    },
+    "dependencies": {
+        "@chadbox/shared": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "tsx": "^4.22.3",
+        "typescript": "^5.0.0"
+    }
 }

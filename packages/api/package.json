@@ -1,37 +1,37 @@
 {
-  "name": "@chadbox/api",
-  "version": "1.0.0",
-  "description": "API layer of Chadbox",
-  "type": "module",
-  "main": "dist/server.js",
-  "types": "dist/server.d.ts",
-  "scripts": {
-    "build": "tsc -b tsconfig.build.json",
-    "dev": "tsx watch src/server.ts",
-    "start": "node dist/server.js",
-    "type-check": "tsc --noEmit -p tsconfig.check.json"
-  },
-  "keywords": [
-    "code-execution",
-    "sandbox",
-    "isolate"
-  ],
-  "author": "Pranav Bagal @cryptomafiaPB",
-  "packageManager": "pnpm@11.2.2",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cryptomafiaPB/chadbox",
-    "directory": "packages/api"
-  },
-  "dependencies": {
-    "fastify": "^5.8.5",
-    "@chadbox/core": "workspace:*",
-    "@chadbox/shared": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "tsx": "^4.22.3",
-    "typescript": "^5.0.0"
-  }
+    "name": "@chadbox/api",
+    "version": "1.0.0",
+    "description": "API layer of Chadbox",
+    "type": "module",
+    "main": "dist/server.js",
+    "types": "dist/server.d.ts",
+    "scripts": {
+        "build": "tsc -b tsconfig.build.json",
+        "dev": "tsx watch src/server.ts",
+        "start": "node dist/server.js",
+        "type-check": "tsc --noEmit -p tsconfig.check.json"
+    },
+    "keywords": [
+        "code-execution",
+        "sandbox",
+        "isolate"
+    ],
+    "author": "Pranav Bagal @cryptomafiaPB",
+    "packageManager": "pnpm@11.2.2",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cryptomafiaPB/chadbox",
+        "directory": "packages/api"
+    },
+    "dependencies": {
+        "fastify": "^5.8.5",
+        "@chadbox/core": "workspace:*",
+        "@chadbox/shared": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "tsx": "^4.22.3",
+        "typescript": "^5.0.0"
+    }
 }

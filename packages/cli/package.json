@@ -1,42 +1,45 @@
 {
-  "name": "@chadbox/cli",
-  "version": "1.0.0",
-  "description": "CLI for Chadbox",
-  "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "bin": {
-    "chad": "./dist/index.js"
-  },
-  "scripts": {
-    "build": "tsc -b",
-    "dev": "tsc -b -w",
-    "start": "tsx src/index.ts",
-    "type-check": "tsc --noEmit"
-  },
-  "keywords": [
-    "code-execution",
-    "sandbox",
-    "isolate"
-  ],
-  "author": "Pranav Bagal @cryptomafiaPB",
-  "packageManager": "pnpm@11.2.2",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cryptomafiaPB/chadbox",
-    "directory": "packages/cli"
-  },
-  "dependencies": {
-    "@chadbox/core": "workspace:*",
-    "@chadbox/shared": "workspace:*",
-    "commander": "^14.0.3",
-    "ora": "^9.4.0",
-    "picocolors": "^1.1.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "tsx": "^4.22.3",
-    "typescript": "^5.0.0"
-  }
+    "name": "@chadbox/cli",
+    "version": "1.0.0",
+    "description": "CLI for Chadbox",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "bin": {
+        "chad": "./dist/index.js"
+    },
+    "scripts": {
+        "build": "tsc -b",
+        "dev": "tsc -b -w",
+        "start": "tsx src/index.ts",
+        "type-check": "tsc --noEmit"
+    },
+    "keywords": [
+        "code-execution",
+        "sandbox",
+        "isolate"
+    ],
+    "author": "Pranav Bagal @cryptomafiaPB",
+    "packageManager": "pnpm@11.2.2",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cryptomafiaPB/chadbox",
+        "directory": "packages/cli"
+    },
+    "dependencies": {
+        "@chadbox/core": "workspace:*",
+        "@chadbox/shared": "workspace:*",
+        "bytes": "^3.1.2",
+        "cli-table3": "^0.6.5",
+        "commander": "^14.0.3",
+        "ora": "^9.4.0",
+        "picocolors": "^1.1.1"
+    },
+    "devDependencies": {
+        "@types/bytes": "^3.1.5",
+        "@types/node": "^20.0.0",
+        "tsx": "^4.22.3",
+        "typescript": "^5.0.0"
+    }
 }

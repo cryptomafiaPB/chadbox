@@ -1,65 +1,66 @@
 {
-  "name": "chadbox",
-  "version": "1.0.0",
-  "description": "A lightweight, secure, and self-hostable code execution engine designed for efficiency and ease of use",
-  "main": "index.js",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "pnpm --filter @chadbox/api run dev",
-    "start": "pnpm --filter @chadbox/api run start",
-    "build": "pnpm -r run build",
-    "test": "pnpm --filter @chadbox/core run test",
-    "test:core": "pnpm --filter @chadbox/core run test",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --write \"**/*.{ts,js,json,md,yml,yaml}\"",
-    "format:check": "prettier --check \"**/*.{ts,js,json,md,yml,yaml}\"",
-    "type-check": "tsc -b --pretty false",
-    "type-check:all": "pnpm -r run type-check",
-    "clean": "pnpm -r exec rm -rf dist node_modules .turbo .pnpm-store",
-    "prepare": "husky",
-    "chad": "tsx packages/cli/src/index.ts"
-  },
-  "keywords": [
-    "code-execution",
-    "sandbox",
-    "safe-execution",
-    "multi-language",
-    "open-source"
-  ],
-  "author": "Pranav Bagal @cryptomafiaPB",
-  "license": "MIT",
-  "packageManager": "pnpm@11.2.2",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cryptomafiaPB/chadbox"
-  },
-  "bugs": {
-    "url": "https://github.com/cryptomafiaPB/chadbox/issues"
-  },
-  "homepage": "https://github.com/cryptomafiaPB/chadbox",
-  "devDependencies": {
-    "@eslint/js": "^9.0.0",
-    "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
-    "eslint": "^10.0.0",
-    "eslint-config-prettier": "^9.0.0",
-    "husky": "^9.0.0",
-    "lint-staged": "^16.0.0",
-    "prettier": "^3.3.0",
-    "tsx": "^4.22.3",
-    "typescript": "^5.0.0",
-    "typescript-eslint": "^8.0.0"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "eslint --fix",
-      "prettier --write"
+    "name": "chadbox",
+    "version": "1.0.0",
+    "description": "A lightweight, secure, and self-hostable code execution engine designed for efficiency and ease of use",
+    "main": "index.js",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "pnpm --filter @chadbox/api run dev",
+        "start": "pnpm --filter @chadbox/api run start",
+        "build": "pnpm -r run build",
+        "test": "pnpm --filter @chadbox/core run test",
+        "test:core": "pnpm --filter @chadbox/core run test",
+        "test:chaos": "tsx packages/api/src/__tests__/chaos_2.ts",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "format": "prettier --write \"**/*.{ts,js,json,md,yml,yaml}\"",
+        "format:check": "prettier --check \"**/*.{ts,js,json,md,yml,yaml}\"",
+        "type-check": "tsc -b --pretty false",
+        "type-check:all": "pnpm -r run type-check",
+        "clean": "pnpm -r exec rm -rf dist node_modules .turbo .pnpm-store",
+        "prepare": "husky",
+        "chad": "tsx packages/cli/src/index.ts"
+    },
+    "keywords": [
+        "code-execution",
+        "sandbox",
+        "safe-execution",
+        "multi-language",
+        "open-source"
     ],
-    "*.{js,json,md,yml,yaml}": [
-      "prettier --write"
-    ]
-  }
+    "author": "Pranav Bagal @cryptomafiaPB",
+    "license": "MIT",
+    "packageManager": "pnpm@11.2.2",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cryptomafiaPB/chadbox"
+    },
+    "bugs": {
+        "url": "https://github.com/cryptomafiaPB/chadbox/issues"
+    },
+    "homepage": "https://github.com/cryptomafiaPB/chadbox",
+    "devDependencies": {
+        "@eslint/js": "^9.0.0",
+        "@types/node": "^20.0.0",
+        "@typescript-eslint/eslint-plugin": "^8.0.0",
+        "@typescript-eslint/parser": "^8.0.0",
+        "eslint": "^10.0.0",
+        "eslint-config-prettier": "^9.0.0",
+        "husky": "^9.0.0",
+        "lint-staged": "^16.0.0",
+        "prettier": "^3.3.0",
+        "tsx": "^4.22.3",
+        "typescript": "^5.0.0",
+        "typescript-eslint": "^8.0.0"
+    },
+    "lint-staged": {
+        "*.ts": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "*.{js,json,md,yml,yaml}": [
+            "prettier --write"
+        ]
+    }
 }
