@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import { installCommand } from './commands/install.js';
 import { uninstallCommand } from './commands/uninstall.js';
+import { listCommand } from './commands/list.js';
 
 const program = new Command();
 
@@ -15,6 +16,7 @@ program
     .command('uninstall <language>')
     .description('Remove an installed language')
     .action(uninstallCommand);
+program.command('list').description('List available and installed languages').action(listCommand);
 
 if (!process.argv.slice(2).length) {
     program.outputHelp();
