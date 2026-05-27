@@ -4,6 +4,7 @@ import { installCommand } from './commands/install.js';
 import { uninstallCommand } from './commands/uninstall.js';
 import { listCommand } from './commands/list.js';
 import { infoCommand } from './commands/info.js';
+import { healthCommand } from './commands/health.js';
 
 const program = new Command();
 
@@ -22,6 +23,10 @@ program
     .command('info <language>')
     .description('Show deep diagnostics for an installed language')
     .action(infoCommand);
+program
+    .command('health')
+    .description('Check kernel, isolate, and system requirements')
+    .action(healthCommand);
 
 if (!process.argv.slice(2).length) {
     program.outputHelp();
