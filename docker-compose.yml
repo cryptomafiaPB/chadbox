@@ -7,13 +7,20 @@ services:
             - CI=true
         volumes:
             - .:/app
-            # - /sys/fs/cgroup:/sys/fs/cgroup:rw
-            # tells Docker to keep these folders natively in Linux and NOT sync them to Windows
-            - /app/node_modules
-            - /app/packages/api/node_modules
-            - /app/packages/core/node_modules
-            - /app/packages/shared/node_modules
+            # Keep dependency trees inside Linux volumes so they are not masked by Windows bind mounts.
+            - chadbox_root_node_modules:/app/node_modules
+            - chadbox_api_node_modules:/app/packages/api/node_modules
+            - chadbox_core_node_modules:/app/packages/core/node_modules
+            - chadbox_shared_node_modules:/app/packages/shared/node_modules
+            - chadbox_cli_node_modules:/app/packages/cli/node_modules
         working_dir: /app
-        command: pnpm run dev
+        command: sh -c "pnpm install --frozen-lockfile && pnpm run dev"
         ports:
             - '3000:3000'
+
+volumes:
+    chadbox_root_node_modules:
+    chadbox_api_node_modules:
+    chadbox_core_node_modules:
+    chadbox_shared_node_modules:
+    chadbox_cli_node_modules:
