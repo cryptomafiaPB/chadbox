@@ -5,6 +5,7 @@ import { uninstallCommand } from './commands/uninstall.js';
 import { listCommand } from './commands/list.js';
 import { infoCommand } from './commands/info.js';
 import { healthCommand } from './commands/health.js';
+import { pruneCommand } from './commands/prune.js';
 
 const program = new Command();
 
@@ -27,6 +28,10 @@ program
     .command('health')
     .description('Check kernel, isolate, and system requirements')
     .action(healthCommand);
+program
+    .command('prune')
+    .description('Force clean zombie mounts and temp files')
+    .action(pruneCommand);
 
 if (!process.argv.slice(2).length) {
     program.outputHelp();
