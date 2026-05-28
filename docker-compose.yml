@@ -7,7 +7,7 @@ services:
             - CI=true
         volumes:
             - .:/app
-            # Keep dependency trees inside Linux volumes so they are not masked by Windows bind mounts.
+            # Keep dependency trees inside Linux volumes
             - chadbox_root_node_modules:/app/node_modules
             - chadbox_api_node_modules:/app/packages/api/node_modules
             - chadbox_core_node_modules:/app/packages/core/node_modules
@@ -15,7 +15,16 @@ services:
             - chadbox_cli_node_modules:/app/packages/cli/node_modules
         working_dir: /app
         # Setup command that creates wrapper script 'chad' to run the CLI from the host, and then starts the development server.
-        command: sh -c "echo '#!/bin/sh\npnpm --filter @chadbox/cli run start \"$$@\"' > /usr/local/bin/chad && chmod +x /usr/local/bin/chad && pnpm install --frozen-lockfile && pnpm run dev"
+        command: |
+            sh -ec '
+            cat > /usr/local/bin/chad <<"EOF"
+            #!/bin/sh
+            exec pnpm --filter @chadbox/cli run start "$@"
+            EOF
+            chmod +x /usr/local/bin/chad
+            pnpm install --frozen-lockfile
+            pnpm run dev
+            '
         ports:
             - '3000:3000'
 
