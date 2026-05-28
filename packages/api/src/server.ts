@@ -1,40 +1,75 @@
 import Fastify from 'fastify';
 import fs from 'fs/promises';
 import path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { ExecutionRequestSchema } from '@chadbox/shared';
 import { Sandbox, KernelManager } from '@chadbox/core';
 import { pool } from './pool.js';
 
+const execAsync = promisify(exec);
 const fastify = Fastify({ logger: true });
+
+// 🚨 ARCHITECTURE FIX 1: Thread-safe Global Cache with Mutex Locks
+const globalMountCache = new Set<string>();
+const mountLocks = new Map<string, Promise<void>>();
+
+async function ensureGlobalMount(language: string, sqshPath: string) {
+    if (globalMountCache.has(language)) return;
+
+    // If another request is currently mounting it, wait for it to finish!
+    if (mountLocks.has(language)) {
+        return mountLocks.get(language);
+    }
+
+    const mountPromise = (async () => {
+        const mountsDir = '/app/languages/mounts';
+        const globalMountPath = path.join(mountsDir, language);
+
+        await fs.mkdir(mountsDir, { recursive: true });
+        await fs.mkdir(globalMountPath, { recursive: true });
+
+        try {
+            await execAsync(`umount -l ${globalMountPath} 2>/dev/null`);
+        } catch (e) {
+            // Ignore unmount errors, it might not be mounted yet or already unmounted.
+        }
+
+        // Fully Asynchronous kernel mount! Does not block Node.js Event Loop.
+        await execAsync(`mount -o loop,ro,exec,nosuid,nodev ${sqshPath} ${globalMountPath}`);
+        globalMountCache.add(language);
+        fastify.log.info(`💿 Globally mounted ${language} into VFS Cache.`);
+    })();
+
+    mountLocks.set(language, mountPromise);
+    try {
+        await mountPromise;
+    } finally {
+        mountLocks.delete(language);
+    }
+}
 
 fastify.post('/api/v1/execute', async (request, reply) => {
     const parsed = ExecutionRequestSchema.safeParse(request.body);
     if (!parsed.success)
-        return reply
-            .status(400)
-            .send({ error: 'Invalid payload format', details: parsed.error.format() });
+        return reply.status(400).send({ error: 'Invalid payload', details: parsed.error.format() });
 
     const payload = parsed.data;
 
-    // Only allow lowercase letters, numbers, and hyphens for language identifiers
     if (!/^[a-z0-9-]+$/.test(payload.language)) {
-        return reply
-            .status(400)
-            .send({ error: 'Invalid language identifier. Malicious path detected.' });
+        return reply.status(400).send({ error: 'Invalid language identifier.' });
     }
 
-    // DYNAMIC LANGUAGE RESOLUTION
     const langJsonPath = path.join('/app/languages', `${payload.language}.json`);
     const sqshPath = path.join('/app/languages', `${payload.language}.sqsh`);
     let langMeta: any;
 
     try {
-        const metaRaw = await fs.readFile(langJsonPath, 'utf8');
-        langMeta = JSON.parse(metaRaw);
+        langMeta = JSON.parse(await fs.readFile(langJsonPath, 'utf8'));
     } catch (e) {
         return reply
             .status(400)
-            .send({ error: `Language environment '${payload.language}' is not installed.` });
+            .send({ error: `Language '${payload.language}' is not installed.` });
     }
 
     let boxId: number;
@@ -46,25 +81,31 @@ fastify.post('/api/v1/execute', async (request, reply) => {
         return reply.status(500).send({ error: 'Internal Engine Error' });
     }
 
-    // INJECT MOUNTS INTO SANDBOX
-    const sandbox = new Sandbox({
-        boxId,
-        timeLimit: payload.run_timeout / 1000,
-        memoryLimit: payload.run_memory_limit > 0 ? payload.run_memory_limit : 256000,
-        mounts: [{ dest: `/opt/${payload.language}`, src: sqshPath }],
-    });
-
     try {
-        sandbox.init();
+        // Safe, non-blocking, race-condition-proof mounting
+        await ensureGlobalMount(payload.language, sqshPath);
+
+        const sandbox = new Sandbox({
+            boxId,
+            timeLimit: payload.run_timeout / 1000,
+            memoryLimit: payload.run_memory_limit > 0 ? payload.run_memory_limit : 256000,
+            mounts: [
+                {
+                    dest: `/opt/${payload.language}`,
+                    src: path.join('/app/languages/mounts', payload.language),
+                },
+            ],
+        });
+
+        // 🚨 ARCHITECTURE FIX 2: Await the new async init()
+        await sandbox.init();
 
         for (const file of payload.files) {
             await sandbox.writeCode(file.name || 'main', file.content);
         }
 
-        const executable = langMeta.executable; // e.g. /opt/python3/bin/python3
         const args = [payload.files[0]?.name || 'main'];
-
-        const result = await sandbox.run(executable, args);
+        const result = await sandbox.run(langMeta.executable, args);
 
         return reply.status(200).send({
             language: payload.language,
@@ -77,17 +118,25 @@ fastify.post('/api/v1/execute', async (request, reply) => {
         return reply.status(500).send({ error: 'Execution failed', details: error.message });
     } finally {
         try {
-            sandbox.cleanup();
+            // Must instantiate sandbox outside try block if you want to clean it here,
+            // but we can just use the core isolate cleanup command safely by ID.
+            await execAsync(`isolate --cleanup --cg --box-id=${boxId}`).catch(() => {});
             pool.releaseBox(boxId);
         } catch (cleanupError) {
-            fastify.log.error(`Failed to cleanup box ${boxId}`);
+            fastify.log.error(`Failed to cleanup sandbox for boxId ${boxId}: ${cleanupError}`);
         }
     }
 });
 
-// Graceful Shutdown Shield (PID 1)
 const shutdown = async () => {
-    fastify.log.info('SIGTERM received. Shutting down gracefully...');
+    fastify.log.info('SIGTERM received. Cleaning up Global Mounts...');
+    for (const lang of globalMountCache) {
+        try {
+            await execAsync(`umount -l /app/languages/mounts/${lang}`);
+        } catch (e) {
+            fastify.log.error(`Failed to unmount ${lang}: ${e}`);
+        }
+    }
     await fastify.close();
     process.exit(0);
 };
@@ -95,7 +144,6 @@ const shutdown = async () => {
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
-// Boot the Engine
 const start = async () => {
     try {
         await KernelManager.bootstrapCgroups();
