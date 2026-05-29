@@ -1,9 +1,11 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 import { logger } from '../utils/logger.js';
+import { spinner } from '@clack/prompts';
 
 export async function pruneCommand() {
-    const spinner = logger.spinner('Scanning for zombie mounts and dangling build files...');
+    const s = spinner();
+    s.start('Scanning for zombie mounts and dangling build files...');
     let mountsCleared = 0;
     let filesCleared = 0;
 
@@ -19,7 +21,9 @@ export async function pruneCommand() {
                 mountsCleared++;
             } catch (e) {
                 // Silently ignore if the kernel already cleaned it up
-                logger.warn(`Failed to unmount ${mountPoint}`);
+                s.message(
+                    logger.pc.yellow(`Already cleaned or Failed to unmount ${mountPoint} ${e}`)
+                );
             }
         }
 
@@ -32,10 +36,10 @@ export async function pruneCommand() {
             }
         }
 
-        spinner.succeed(
+        s.stop(
             `Prune complete. Unmounted ${mountsCleared} zombies, deleted ${filesCleared} temp folders.`
         );
     } catch (err: any) {
-        spinner.fail(`Prune failed: ${err.message}`);
+        s.stop(logger.pc.red(`Prune failed: ${err.message}`));
     }
 }
