@@ -1,7 +1,7 @@
 services:
     chadbox-api:
         build: .
-        container_name: chadbox_core
+        container_name: chadbox_api
         privileged: true
         environment:
             - CI=true
@@ -23,7 +23,8 @@ services:
             EOF
             chmod +x /usr/local/bin/chad
             pnpm install --frozen-lockfile
-            pnpm run dev
+            pnpm build
+            pnpm run start
             '
         ports:
             - '3000:3000'
