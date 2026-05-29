@@ -6,6 +6,8 @@ import { listCommand } from './commands/list.js';
 import { infoCommand } from './commands/info.js';
 import { healthCommand } from './commands/health.js';
 import { pruneCommand } from './commands/prune.js';
+import { benchmarkCommand } from './commands/benchmark.js';
+import { startWizard } from './wizard.js';
 
 const program = new Command();
 
@@ -32,10 +34,18 @@ program
     .command('prune')
     .description('Force clean zombie mounts and temp files')
     .action(pruneCommand);
+program
+    .command('benchmark [language]')
+    .description('Run a high-concurrency stress test against the engine')
+    .option('-c, --concurrent <number>', 'Number of parallel sandboxes', '20')
+    .option('-n, --total <number>', 'Total number of executions', '100')
+    .action(async (language, options) => {
+        // Default to python3 if no language is provided
+        await benchmarkCommand(language || 'python3', options);
+    });
 
 if (!process.argv.slice(2).length) {
-    program.outputHelp();
-    process.exit(0);
+    startWizard();
+} else {
+    program.parse(process.argv);
 }
-
-program.parse(process.argv);
