@@ -10,44 +10,75 @@ import { pool } from './pool.js';
 const execAsync = promisify(exec);
 const fastify = Fastify({ logger: true });
 
-// 🚨 ARCHITECTURE FIX 1: Thread-safe Global Cache with Mutex Locks
-const globalMountCache = new Set<string>();
-const mountLocks = new Map<string, Promise<void>>();
+const MAX_MOUNTS = parseInt(process.env.CHADBOX_MAX_MOUNTS || '10', 10);
+const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
+
+interface CacheEntry {
+    promise: Promise<void>;
+    lastAccessed: number;
+}
+
+// JavaScript Maps preserve insertion order.
+const globalMountCache = new Map<string, CacheEntry>();
 
 async function ensureGlobalMount(language: string, sqshPath: string) {
-    if (globalMountCache.has(language)) return;
+    const now = Date.now();
 
-    // If another request is currently mounting it, wait for it to finish!
-    if (mountLocks.has(language)) {
-        return mountLocks.get(language);
+    // If it exists, update its timestamp and return the promise
+    if (globalMountCache.has(language)) {
+        const entry = globalMountCache.get(language)!;
+        entry.lastAccessed = now;
+
+        // Push to the end of the Map to mark as "Most Recently Used"
+        globalMountCache.delete(language);
+        globalMountCache.set(language, entry);
+        return entry.promise;
     }
 
+    // LRU Eviction: If we hit the server limit, unmount the oldest language
+    if (globalMountCache.size >= MAX_MOUNTS) {
+        const oldestLang = globalMountCache.keys().next().value;
+        if (oldestLang) await forceUnmount(oldestLang);
+    }
+
+    // Create the Mount Promise
     const mountPromise = (async () => {
-        const mountsDir = '/app/languages/mounts';
-        const globalMountPath = path.join(mountsDir, language);
-
-        await fs.mkdir(mountsDir, { recursive: true });
+        const globalMountPath = path.join('/app/languages/mounts', language);
         await fs.mkdir(globalMountPath, { recursive: true });
-
         try {
             await execAsync(`umount -l ${globalMountPath} 2>/dev/null`);
         } catch (e) {
-            // Ignore unmount errors, it might not be mounted yet or already unmounted.
+            // Ignore unmount errors (e.g., if it wasn't mounted)
         }
-
-        // Fully Asynchronous kernel mount! Does not block Node.js Event Loop.
         await execAsync(`mount -o loop,ro,exec,nosuid,nodev ${sqshPath} ${globalMountPath}`);
-        globalMountCache.add(language);
-        fastify.log.info(`💿 Globally mounted ${language} into VFS Cache.`);
+        fastify.log.info(`💿 Mounted ${language} into VFS Cache.`);
     })();
 
-    mountLocks.set(language, mountPromise);
+    globalMountCache.set(language, { promise: mountPromise, lastAccessed: now });
+    await mountPromise;
+}
+
+async function forceUnmount(language: string) {
+    if (!globalMountCache.has(language)) return;
+    globalMountCache.delete(language); // Immediately remove from routing
     try {
-        await mountPromise;
-    } finally {
-        mountLocks.delete(language);
+        await execAsync(`umount -l /app/languages/mounts/${language}`);
+        fastify.log.info(`🧹 Evicted ${language} from VFS Cache.`);
+    } catch (e) {
+        // Ignore unmount errors (e.g., if it wasn't mounted)
     }
 }
+
+// TTL Sweeper: Runs every 5 minutes to clean idle mounts
+setInterval(
+    () => {
+        const cutoff = Date.now() - IDLE_TIMEOUT_MS;
+        for (const [lang, entry] of globalMountCache.entries()) {
+            if (entry.lastAccessed < cutoff) forceUnmount(lang);
+        }
+    },
+    5 * 60 * 1000
+);
 
 fastify.post('/api/v1/execute', async (request, reply) => {
     const parsed = ExecutionRequestSchema.safeParse(request.body);
@@ -82,7 +113,7 @@ fastify.post('/api/v1/execute', async (request, reply) => {
     }
 
     try {
-        // Safe, non-blocking, race-condition-proof mounting
+        // Asynchronous, Thread-Safe, LRU-backed Mount
         await ensureGlobalMount(payload.language, sqshPath);
 
         const sandbox = new Sandbox({
@@ -97,7 +128,6 @@ fastify.post('/api/v1/execute', async (request, reply) => {
             ],
         });
 
-        // 🚨 ARCHITECTURE FIX 2: Await the new async init()
         await sandbox.init();
 
         for (const file of payload.files) {
@@ -118,19 +148,25 @@ fastify.post('/api/v1/execute', async (request, reply) => {
         return reply.status(500).send({ error: 'Execution failed', details: error.message });
     } finally {
         try {
-            // Must instantiate sandbox outside try block if you want to clean it here,
-            // but we can just use the core isolate cleanup command safely by ID.
             await execAsync(`isolate --cleanup --cg --box-id=${boxId}`).catch(() => {});
             pool.releaseBox(boxId);
         } catch (cleanupError) {
-            fastify.log.error(`Failed to cleanup sandbox for boxId ${boxId}: ${cleanupError}`);
+            fastify.log.error(`Failed to cleanup box ${boxId}: ${cleanupError}`);
         }
     }
 });
 
+// --- ADMIN WEBHOOK (For CLI Hot-Reloading) ---
+// Only accessible locally. Used when 'chad install' overwrites a .sqsh file.
+fastify.delete('/api/v1/system/cache/:language', async (request, reply) => {
+    const { language } = request.params as { language: string };
+    await forceUnmount(language);
+    return reply.send({ success: true, message: `Cache cleared for ${language}` });
+});
+
 const shutdown = async () => {
-    fastify.log.info('SIGTERM received. Cleaning up Global Mounts...');
-    for (const lang of globalMountCache) {
+    fastify.log.info('SIGTERM received. Sweeping Mounts...');
+    for (const lang of globalMountCache.keys()) {
         try {
             await execAsync(`umount -l /app/languages/mounts/${lang}`);
         } catch (e) {
@@ -146,6 +182,10 @@ process.on('SIGTERM', shutdown);
 
 const start = async () => {
     try {
+        fastify.log.info('🧹 Running Pre-Flight Sweep...');
+        await execAsync(`umount -l /app/languages/mounts/* 2>/dev/null`).catch(() => {});
+        await execAsync(`rm -rf /app/languages/mounts/* 2>/dev/null`).catch(() => {});
+
         await KernelManager.bootstrapCgroups();
         await fastify.listen({ port: 3000, host: '0.0.0.0' });
         fastify.log.info('🚀 Chadbox API is alive and listening on port 3000');
