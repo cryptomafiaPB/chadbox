@@ -1,128 +1,200 @@
 # Chadbox
 
-> A lightweight, secure, and self-hostable code execution engine designed for efficiency and ease of use.
+> A lightweight, secure, and self-hostable code execution engine built for efficiency, multi-language support, and simple local or remote deployment.
 
-[![Status](https://img.shields.io/badge/status-in%20development-yellow)](https://github.com/your-org/chadbox)
+[![Status](https://img.shields.io/badge/status-in%20development-yellow)](https://github.com/cryptomafiaPB/chadbox)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen)](#contributing)
 
 ## Overview
 
-Chadbox is a general-purpose code execution engine that runs efficiently on minimal infrastructure. Inspired by [Piston](https://github.com/engineer-man/piston), it provides secure sandboxing, multi-language support, and an intuitive API—designed to run comfortably on a $6-12/month cloud instance.
+Chadbox provides a small, opinionated execution engine for running untrusted code in isolated sandboxes. It exposes a REST API for execution and a `chad` CLI for installing languages, checking health, and managing local runtime state.
 
-**Status:** 🚧 In active development | **Community:** [Join our Telegram](https://t.me/chadbox)
+It is designed around the code in this repository: TypeScript services, Zod validation, `isolate`-based sandboxing, and a language bundle mounted into the runtime at execution time.
 
 ## Features
 
-- **Lightweight & Fast** – Low latency, high throughput execution
-- **Secure Sandboxing** – [isolate](https://github.com/ioi/isolate) and Docker-based isolation
-- **Multi-Language Support** – Execute code in various programming languages
-- **Easy-to-Use API** – Simple, well-documented REST API
-- **Self-Hosted** – Full control, no vendor lock-in
-- **CLI Tool** – Convenient command-line interface
-- **LLM-Ready** – Structured APIs suitable for AI model integration
-- **Multi-File Support** – Execute complex projects with multiple files
+- Secure sandboxing with `isolate`
+- Multi-language execution support
+- REST API for programmatic execution
+- CLI for install, uninstall, inspection, and benchmarking
+- Multi-file execution payloads
+- Resource limits for time and memory
+- Self-hosted deployment with minimal moving parts
 
-## What Sets Chadbox Apart
+## Installation
 
-Compared to Piston, Chadbox offers:
+### Prerequisites
 
-- **Better Performance** – Optimized for lower latency and higher throughput
-- **Easier Setup** – Simplified installation and configuration
-- **Resource Efficiency** – Runs lean on minimal hardware
-- **Improved Developer Experience** – Simpler API, comprehensive documentation, enhanced CLI
-- **Better Monitoring** – Built-in observability features
-- **More Flexible** – Configurable logging, resource limits, and more
+- Node.js 18 or newer
+- pnpm 11 or newer
+- Linux host with `isolate` and cgroup support
+- Docker
 
-## Tech Stack
-
-- **Language:** TypeScript
-- **Validation:** Zod
-- **Sandboxing:** isolate (system-level), Docker (container-based)
-- **Runtime:** Node.js with Shell scripting
-
-<!-- ## Quick Start -->
-
-<!-- ### Installation
+### Local setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/chadbox.git
+git clone https://github.com/cryptomafiaPB/chadbox.git
 cd chadbox
+docker compose up -d --build
+```
 
-# Install dependencies
-npm install
-
-# Configure (see Configuration section)
-cp .env.example .env
-
-# Start the server
-npm start
-``` -->
-
-<!-- ### Basic Usage
+### Run the API
 
 ```bash
-# Via API
-curl -X POST http://localhost:5000/execute \
+docker compose up -d
+```
+
+The API starts on port `3000` by default.
+
+### Run the CLI
+
+```bash
+docker compose exec chadbox-api bash
+
+chad
+```
+
+### CLI commands
+
+```bash
+chad list
+chad health
+chad install <language>
+chad uninstall <language>
+chad info <language>
+chad benchmark <language> --concurrent 20 --total 100
+```
+
+Running `chad` with no arguments opens the interactive setup wizard.
+
+## Usage
+
+### Execute code through the API
+
+Send a `POST` request to `/api/v1/execute` with a language, version, and at least one file.
+
+```bash
+curl -X POST http://localhost:3000/api/v1/execute \
   -H "Content-Type: application/json" \
   -d '{
-    "language": "python",
-    "code": "print(\"Hello, Chadbox!\")"
+    "language": "python3",
+    "version": "3.12",
+    "files": [
+      {
+        "name": "main.py",
+        "content": "print(\"Hello from Chadbox\")"
+      }
+    ],
+    "stdin": "",
+    "args": [],
+    "compile_timeout": 10000,
+    "run_timeout": 3000,
+    "compile_memory_limit": -1,
+    "run_memory_limit": -1
   }'
+```
 
-# Via CLI
-chadbox execute --language python --file script.py
-``` -->
-
-<!-- ## Documentation
-
-- [API Reference](./docs/api.md) – Complete endpoint documentation
-- [Supported Languages](./docs/languages.md) – Available programming languages
-- [Installation Guide](./docs/installation.md) – Detailed setup instructions
-- [Configuration](./docs/configuration.md) – Environment and resource settings
-- [Security Considerations](./docs/security.md) – Sandboxing and best practices -->
-
-<!-- ## Requirements
-
-- Node.js 16+
-- Docker (optional, for container-based sandboxing)
-- isolate (for system-level sandboxing)
-- 512MB+ RAM
-- Linux-based OS (Ubuntu, Debian, etc.) -->
-
-<!-- ## Configuration
-
-Environment variables (see `.env.example`):
+### Use the CLI
 
 ```bash
-PORT=5000
-SANDBOX_TYPE=isolate          # or 'docker'
-MAX_EXECUTION_TIME=5000       # milliseconds
-MAX_MEMORY=256                # MB
-LOG_LEVEL=info
-``` -->
+pnpm chad list
+pnpm chad health
+pnpm chad install python3
+pnpm chad info python3
+pnpm chad benchmark python3 --concurrent 20 --total 100
+```
+
+## Examples
+
+### Python example
+
+```json
+{
+    "language": "python3",
+    "version": "3.12",
+    "files": [
+        {
+            "name": "main.py",
+            "content": "print(sum(range(10)))"
+        }
+    ]
+}
+```
+
+### Multi-file example
+
+```json
+{
+    "language": "nodejs",
+    "version": "20",
+    "files": [
+        {
+            "name": "main.js",
+            "content": "import { greet } from './util.js'; console.log(greet('Chadbox'));"
+        },
+        {
+            "name": "util.js",
+            "content": "export const greet = (name) => `Hello, ${name}`;"
+        }
+    ]
+}
+```
+
+## About the `chad` CLI
+
+The CLI lives in `packages/cli` and wraps common local management tasks around the engine:
+
+- `chad` - opens the interactive wizard when no subcommand is provided
+- `chad install <language>` - download and compile a language bundle
+- `chad uninstall <language>` - remove an installed language
+- `chad list` - show available and installed languages
+- `chad info <language>` - inspect an installed language in detail
+- `chad health` - validate kernel, `isolate`, and host requirements
+- `chad prune` - clean zombie mounts and temporary files
+- `chad benchmark [language]` - stress test the engine, defaulting to `python3`
+
+## API Endpoints
+
+### `POST /api/v1/execute`
+
+Executes code in an isolated sandbox.
+
+Required fields:
+
+- `language` - installed language identifier, such as `python3`
+- `version` - version string for the selected runtime
+- `files` - array of files, each with `name`, `content`, and optional `encoding`
+
+Optional fields:
+
+- `stdin` - standard input passed to the program
+- `args` - runtime arguments
+- `compile_timeout` - maximum compile time in milliseconds
+- `run_timeout` - maximum runtime in milliseconds
+- `compile_memory_limit` - compile memory limit
+- `run_memory_limit` - run memory limit
+
+Response fields include `language`, `version`, `run`, optional `compile`, and `status`.
+
+### `DELETE /api/v1/system/cache/:language`
+
+Clears the cached mount for a language. This endpoint is intended for local admin use when a language bundle is refreshed.
 
 ## Contributing
 
-Contributions are welcome! Please:
-
-<!-- 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request -->
+Contributions are welcome. Please open an issue or pull request with a focused change and include any relevant validation notes.
 
 ## License
 
-This project is licensed under the MIT License – see [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
-Built with inspiration from [Piston](https://github.com/engineer-man/piston) – an excellent code execution engine.
+Chadbox is inspired by [Piston](https://github.com/engineer-man/piston).
 
 ## Support & Discussion
 
-- 💬 [Telegram Community](https://t.me/chadbox)
-- 📝 [Issues & Feature Requests](https://github.com/chadbox/issues)
-- 💡 [Discussions](https://github.com/chadbox/discussions)
+- [Telegram Community](https://t.me/chadbox)
+- [Issues & Feature Requests](https://github.com/cryptomafiaPB/chadbox/issues)
+- [Discussions](https://github.com/cryptomafiaPB/chadbox/discussions)
