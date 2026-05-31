@@ -21,7 +21,7 @@ export class Sandbox {
         this.config = config;
     }
 
-    // 🚨 ARCHITECTURE FIX 3: Async Init
+    // Async Init
     public async init(): Promise<string> {
         try {
             const { stdout } = await execAsync(`isolate --init --cg --box-id=${this.config.boxId}`);
@@ -70,7 +70,7 @@ export class Sandbox {
 
         isolateArgs.push('--', executable, ...args);
 
-        // 🚨 ARCHITECTURE FIX 4: Capture exact Exit Code
+        // Capture exact Exit Code
         const exitCode = await new Promise<number | null>((resolve) => {
             const proc = spawn('isolate', isolateArgs, { stdio: 'ignore' });
 
@@ -113,7 +113,7 @@ export class Sandbox {
         return await this.parseMetaFile(metaFile, finalStdout || '', finalStderr || '', exitCode);
     }
 
-    // 🚨 ARCHITECTURE FIX 5: Async Cleanup
+    // Async Cleanup
     public async cleanup(): Promise<void> {
         try {
             await execAsync(`isolate --cleanup --cg --box-id=${this.config.boxId}`);

@@ -83,7 +83,8 @@ export async function benchmarkCommand(
     const endTime = performance.now();
     const totalTimeSeconds = (endTime - startTime) / 1000;
 
-    // --- STATISTICAL ANALYSIS ---
+    // statistical analysis
+
     latencies.sort((a, b) => a - b);
     const avg = latencies.reduce((a, b) => a + b, 0) / latencies.length;
     const p50 = latencies[Math.floor(latencies.length * 0.5)];
@@ -91,7 +92,7 @@ export async function benchmarkCommand(
     const p99 = latencies[Math.floor(latencies.length * 0.99)];
     const rps = (total / totalTimeSeconds).toFixed(2);
 
-    // --- RENDER DASHBOARD ---
+    // render dashboard
     const statTable = new Table({ style: { head: [], border: [] } });
     statTable.push(
         ['Total Time', `${totalTimeSeconds.toFixed(2)} seconds`],
@@ -116,6 +117,4 @@ export async function benchmarkCommand(
     console.log(`\n⚡ ${logger.pc.bold('Latency Distribution')}`);
     console.log(latencyTable.toString());
     console.log('');
-    // console.log(`${logger.pc.cyan('Response Body:')}`);
-    // console.log(JSON.parse(r));
 }

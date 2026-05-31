@@ -61,7 +61,7 @@ export class KernelManager {
                 execSync(`mkdir -p ${isolateCgroup}`);
             }
 
-            // Rebuild the volatile /run directory for isolate's state tracker
+            // rebuild the volatile /run directory for isolate's state tracker
             execSync('mkdir -p /run/isolate');
             execSync('chmod 777 /run/isolate');
             fs.writeFileSync('/run/isolate/cgroup', `${isolateCgroup}\n`);
