@@ -9,19 +9,56 @@ import { healthCommand } from './commands/health.js';
 import { pruneCommand } from './commands/prune.js';
 import { benchmarkCommand } from './commands/benchmark.js';
 
+// wizard ASCII art
+const WIZARD_ASCII = `╭──────────────────────────────────────────────────────────────────────────────╮
+   │                                                                              │
+   │   ────────  CHADBOX :: Secure Runtime Execution Engine  ─────────            │
+   │                                                                              │
+   │     ██████╗██╗  ██╗ █████╗ ██████╗ ██████╗  ██████╗ ██╗  ██╗                 │
+   │    ██╔════╝██║  ██║██╔══██╗██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝                 │
+   │    ██║     ███████║███████║██║  ██║██████╔╝██║   ██║ ╚███╔╝                  │
+   │    ██║     ██╔══██║██╔══██║██║  ██║██╔══██╗██║   ██║ ██╔██╗                  │
+   │    ╚██████╗██║  ██║██║  ██║██████╔╝██████╔╝╚██████╔╝██╔╝ ██╗                 │
+   │     ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝                 │
+   │                                                                              │
+   │    > lightweight runtime engine          ┌────────────┐                      │
+   │    > secure sandboxed execution          │   ▄▄▄▄▄    │                      │
+   │    > blazing-fast multi-runtime          │  █ ▀ ▀█    │                      │
+   │    > isolated containers/processes       │  █  ▄ █    │                      │
+   │    > built for developers                │  █▄▄▄▄█    │                      │
+   │                                          │  chadbox   │                      │
+   │                                          └────────────┘                      │
+   │                                                                              │
+   │   ───────────────────────────────────────────────────────────────────────    │
+   │                                                                              │
+   │    Engine      : Ready            │     Sandbox     : Active                 │
+   │                                                                              │
+   │                     Chadbox  : Available Commands                            │
+   │                                                                              │
+   │    install  •  uninstall  •  list   •  benchmark  •  health  •  prune        │
+   │                                                                              │
+   │                                                                              │
+   │   ───────────────────────────────────────────────────────────────────────    │
+   │                                                                              │
+   │    Version     : v1.0.0           │    Docs     : docs.chadbox.dev           │
+   │                                                                              │
+   ╰──────────────────────────────────────────────────────────────────────────────╯`;
+
 export async function startWizard() {
     console.clear();
-    intro(pc.bgCyan(pc.black(' ⚡ CHADBOX DEVTOOLS ')));
+    intro(WIZARD_ASCII);
+    // intro(pc.bgCyan(pc.black(' ⚡ CHADBOX DEVTOOLS ')));
 
     const action = await select({
+        // message: 'What would you like to do?',
         message: 'What would you like to do?',
         options: [
-            { value: 'install', label: '📦 Install Environment' },
-            { value: 'uninstall', label: '🗑️  Uninstall Environment' },
-            { value: 'list', label: '📊 View Registry Matrix' },
-            { value: 'benchmark', label: '🔥 Run Stress Test Benchmark' },
-            { value: 'health', label: '🩺 System Health Check' },
-            { value: 'prune', label: '🧹 Prune Zombie Mounts' },
+            { value: 'install', label: '📦    Install Language Environment' },
+            { value: 'uninstall', label: '🗑️    Uninstall Language Environment' },
+            { value: 'list', label: '📊   View Installed Languages Registry' },
+            { value: 'benchmark', label: '🔥   Run Stress Test Benchmark' },
+            { value: 'health', label: '🩺   System Health Check' },
+            { value: 'prune', label: '🧹   Prune/Clean Zombie Mounts' },
         ],
     });
 
