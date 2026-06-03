@@ -40,7 +40,7 @@ const WIZARD_ASCII = `╭──────────────────�
    │                                                                              │
    │   ───────────────────────────────────────────────────────────────────────    │
    │                                                                              │
-   │    Version     : v1.0.0           │    Docs     : docs.chadbox.dev           │
+   │                            Version     : v1.0.0                              │
    │                                                                              │
    ╰──────────────────────────────────────────────────────────────────────────────╯`;
 
@@ -50,7 +50,6 @@ export async function startWizard() {
     // intro(pc.bgCyan(pc.black(' ⚡ CHADBOX DEVTOOLS ')));
 
     const action = await select({
-        // message: 'What would you like to do?',
         message: 'What would you like to do?',
         options: [
             { value: 'install', label: '📦    Install Language Environment' },

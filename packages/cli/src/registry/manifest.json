@@ -18,6 +18,11 @@
                 "url": "https://nodejs.org/dist/v20.11.0/node-v20.11.0-linux-x64.tar.xz",
                 "extractFolder": "node-v20.11.0-linux-x64",
                 "executable": "/opt/nodejs/bin/node"
+            },
+            "24.16.0": {
+                "url": "https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-x64.tar.xz",
+                "extractFolder": "node-v24.16.0-linux-x64",
+                "executable": "/opt/nodejs/bin/node"
             }
         }
     }
