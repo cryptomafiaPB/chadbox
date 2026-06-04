@@ -10,16 +10,17 @@ export const FileSchema = z.object({
 // payload POST /api/v1/execute route will accept.
 export const ExecutionRequestSchema = z.object({
     language: z.string().min(1, 'Language is required'),
-    version: z.string().min(1, 'Version is required'),
+    version: z.string().min(1, 'Version is required').default('latest'),
     files: z.array(FileSchema).min(1, 'At least one file must be provided'),
     stdin: z.string().default(''),
     args: z.array(z.string()).default([]),
 
     // Resource Limits (with safe fallbacks)
-    compile_timeout: z.number().max(20000).default(10000), // Max 20s - Default 10s
+    compile_timeout: z.number().max(13000).default(10000), // Max 13s - Default 10s
+    compile_memory_limit: z.number().max(1024000).default(512000), // Max 1GB - Default 512MB
+
     run_timeout: z.number().max(10000).default(3000), // Max 10s - Default 3s
-    compile_memory_limit: z.number().default(-1), // -1 means no strict limit beyond cgroup baseline
-    run_memory_limit: z.number().default(-1),
+    run_memory_limit: z.number().max(512000).default(128000), // Max 512MB - Default 128MB
 });
 
 // Execution Result Schema
