@@ -6,7 +6,8 @@
             "3.10.13": {
                 "url": "https://github.com/indygreg/python-build-standalone/releases/download/20240107/cpython-3.10.13+20240107-x86_64-unknown-linux-gnu-install_only.tar.gz",
                 "extractFolder": "python",
-                "executable": "/opt/python3/bin/python3"
+                "compile_cmd": null,
+                "run_cmd": ["/opt/python3/bin/python3", "{files}"]
             }
         }
     },
@@ -17,12 +18,86 @@
             "20.11.0": {
                 "url": "https://nodejs.org/dist/v20.11.0/node-v20.11.0-linux-x64.tar.xz",
                 "extractFolder": "node-v20.11.0-linux-x64",
-                "executable": "/opt/nodejs/bin/node"
+                "compile_cmd": null,
+                "run_cmd": ["/opt/nodejs/bin/node", "{files}"]
             },
             "24.16.0": {
                 "url": "https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-x64.tar.xz",
                 "extractFolder": "node-v24.16.0-linux-x64",
-                "executable": "/opt/nodejs/bin/node"
+                "compile_cmd": null,
+                "run_cmd": ["/opt/nodejs/bin/node", "{files}"]
+            }
+        }
+    },
+    "c": {
+        "name": "C (GCC)",
+        "default_version": "12.0.0",
+        "versions": {
+            "12.0.0": {
+                "url": "system",
+                "compile_cmd": ["/usr/bin/gcc", "-O2", "-Wall", "{files}", "-o", "main"],
+                "run_cmd": ["./main"]
+            }
+        }
+    },
+    "cpp": {
+        "name": "C++ (GCC)",
+        "default_version": "12.0.0",
+        "versions": {
+            "12.0.0": {
+                "url": "system",
+                "compile_cmd": [
+                    "/usr/bin/g++",
+                    "-O2",
+                    "-Wall",
+                    "-std=c++20",
+                    "{files}",
+                    "-o",
+                    "main"
+                ],
+                "run_cmd": ["./main"]
+            }
+        }
+    },
+    "go": {
+        "name": "Go",
+        "default_version": "1.22.1",
+        "versions": {
+            "1.22.1": {
+                "url": "https://go.dev/dl/go1.22.1.linux-amd64.tar.gz",
+                "extractFolder": "go",
+                "compile_cmd": ["/opt/go/bin/go", "build", "-o", "main", "{files}"],
+                "run_cmd": ["./main"],
+                "env": {
+                    "GOROOT": "/opt/go",
+                    "GOCACHE": "/box",
+                    "CGO_ENABLED": "0"
+                }
+            }
+        }
+    },
+    "rust": {
+        "name": "Rust",
+        "default_version": "1.76.0",
+        "versions": {
+            "1.76.0": {
+                "url": "https://static.rust-lang.org/dist/rust-1.76.0-x86_64-unknown-linux-gnu.tar.gz",
+                "setup_cmd": "cd rust-1.76.0-x86_64-unknown-linux-gnu && ./install.sh --prefix=../rust_env --without=rust-docs",
+                "extractFolder": "rust_env",
+                "compile_cmd": ["/opt/rust/bin/rustc", "-O", "{files}", "-o", "main"],
+                "run_cmd": ["./main"]
+            }
+        }
+    },
+    "java": {
+        "name": "Java (OpenJDK)",
+        "default_version": "21.0.2",
+        "versions": {
+            "21.0.2": {
+                "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jdk_x64_linux_hotspot_21.0.2_13.tar.gz",
+                "extractFolder": "jdk-21.0.2+13",
+                "compile_cmd": ["/opt/java/bin/javac", "{files}"],
+                "run_cmd": ["/opt/java/bin/java", "Main"]
             }
         }
     }
