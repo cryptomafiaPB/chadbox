@@ -66,11 +66,21 @@
             "1.22.1": {
                 "url": "https://go.dev/dl/go1.22.1.linux-amd64.tar.gz",
                 "extractFolder": "go",
-                "compile_cmd": ["/opt/go/bin/go", "build", "-o", "main", "{files}"],
+                "compile_cmd": [
+                    "/opt/go/bin/go",
+                    "build",
+                    "-buildvcs=false",
+                    "-o",
+                    "main",
+                    "{files}"
+                ],
                 "run_cmd": ["./main"],
                 "env": {
                     "GOROOT": "/opt/go",
-                    "GOCACHE": "/box",
+                    "GOPATH": "/box/go",
+                    "GOCACHE": "/box/.cache",
+                    "GOTMPDIR": "/box",
+                    "GOMAXPROCS": "1",
                     "CGO_ENABLED": "0"
                 }
             }
