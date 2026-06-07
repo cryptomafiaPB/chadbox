@@ -206,11 +206,13 @@ fastify.post('/api/v1/execute', async (request, reply) => {
         fastify.log.error(error);
         return reply.status(500).send({ error: 'Execution failed', details: error.message });
     } finally {
-        try {
-            await execAsync(`isolate --cleanup --cg --box-id=${boxId}`).catch(() => {});
-            pool.releaseBox(boxId);
-        } catch (cleanupError) {
-            fastify.log.error(`Failed to cleanup box ${boxId}: ${cleanupError}`);
+        if (boxId !== undefined) {
+            try {
+                await execAsync(`isolate --cleanup --cg --box-id=${boxId}`).catch(() => {});
+                pool.releaseBox(boxId);
+            } catch (cleanupError) {
+                fastify.log.error(`Failed to cleanup box ${boxId}: ${cleanupError}`);
+            }
         }
     }
 });
