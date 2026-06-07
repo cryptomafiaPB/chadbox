@@ -118,8 +118,8 @@ fastify.post('/api/v1/execute', async (request, reply) => {
 
         const sandbox = new Sandbox({
             boxId,
-            timeLimit: payload.run_timeout / 1000,
-            memoryLimit: payload.run_memory_limit > 0 ? payload.run_memory_limit : 256000,
+            // timeLimit: payload.run_timeout / 1000,
+            // memoryLimit: payload.run_memory_limit > 0 ? payload.run_memory_limit : 256000,
             mounts: [
                 {
                     dest: `/opt/${payload.language}`,
@@ -130,18 +130,77 @@ fastify.post('/api/v1/execute', async (request, reply) => {
 
         await sandbox.init();
 
-        for (const file of payload.files) {
-            await sandbox.writeCode(file.name || 'main', file.content);
+        const fileNames: string[] = [];
+        for (let i = 0; i < payload.files.length; i++) {
+            const file = payload.files[i];
+            let fname = file?.name;
+            if (!fname) {
+                fname = payload.language === 'java' ? 'Main.java' : i === 0 ? 'main' : `file${i}`;
+            }
+
+            fileNames.push(fname);
+            await sandbox.writeCode(fname, file!.content);
         }
 
-        const args = [payload.files[0]?.name || 'main'];
-        const result = await sandbox.run(langMeta.executable, args);
+        // write STDIN to a disk (even if empty) for sandbox
+        await sandbox.writeCode('stdin.txt', payload.stdin || '');
+
+        // Safely map the {files} token to the actual filenames
+        const parseCmd = (cmd: string[]) =>
+            cmd.flatMap((arg) => (arg === '{files}' ? fileNames : [arg]));
+
+        let compileResult: any = undefined;
+
+        // STAGE 1: COMPILATION (Heavy Limits)
+        if (langMeta.compile_cmd) {
+            const compileCmd = parseCmd(langMeta.compile_cmd);
+            compileResult = await sandbox.run(compileCmd, {
+                stage: 'compile',
+                timeLimit: payload.compile_timeout / 1000,
+                memoryLimit: payload.compile_memory_limit,
+                processes: 256, // Compilers need to spawn many threads to build ASTs
+                fsize: 51200, // 50MB quota for heavy compiled binaries
+                env: langMeta.env, // Pass environment variables
+            });
+
+            // If compilation fails, short-circuit and return immediately
+            if (compileResult.code !== 0) {
+                return reply.status(200).send({
+                    language: payload.language,
+                    version: payload.version,
+                    run: {
+                        stdout: '',
+                        stderr: '',
+                        code: null,
+                        signal: null,
+                        time: 0,
+                        memory: 0,
+                        output_limit_exceeded: false,
+                    },
+                    compile: compileResult,
+                    status: 'RE',
+                });
+            }
+        }
+
+        // STAGE 2: EXECUTION (Strict Untrusted Limits)
+        // Spread args
+        const runCmd = [...parseCmd(langMeta.run_cmd), ...(payload.args || [])];
+        const runResult = await sandbox.run(runCmd, {
+            stage: 'run',
+            timeLimit: payload.run_timeout / 1000,
+            memoryLimit: payload.run_memory_limit > 0 ? payload.run_memory_limit : 256000,
+            processes: 64, // Restrict threads to prevent Fork Bombs
+            fsize: 10240, // 10MB file quota
+            env: langMeta.env, // Pass environment variables
+        });
 
         return reply.status(200).send({
             language: payload.language,
             version: payload.version,
-            run: result,
-            status: result.code === 0 ? 'OK' : 'RE',
+            run: runResult,
+            ...(compileResult && { compile: compileResult }),
+            status: runResult.code === 0 ? 'OK' : 'RE',
         });
     } catch (error: any) {
         fastify.log.error(error);
