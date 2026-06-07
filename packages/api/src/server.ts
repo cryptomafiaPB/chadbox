@@ -208,10 +208,11 @@ fastify.post('/api/v1/execute', async (request, reply) => {
     } finally {
         if (boxId !== undefined) {
             try {
-                await execAsync(`isolate --cleanup --cg --box-id=${boxId}`).catch(() => {});
-                pool.releaseBox(boxId);
+                await execAsync(`isolate --cleanup --cg --box-id=${boxId}`);
             } catch (cleanupError) {
-                fastify.log.error(`Failed to cleanup box ${boxId}: ${cleanupError}`);
+                fastify.log.error({ err: cleanupError }, `Failed to cleanup box ${boxId}`);
+            } finally {
+                pool.releaseBox(boxId);
             }
         }
     }
