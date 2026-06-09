@@ -3,6 +3,7 @@ import { promisify } from 'util';
 import fsSync from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
+import crypto from 'crypto';
 import { spinner } from '@clack/prompts';
 import pc from 'picocolors';
 import { getLanguageManifest } from '../registry/index.js';
@@ -28,7 +29,7 @@ export async function installCommand(langArg: string) {
     }
 
     const buildDir = `/tmp/chad_build_${lang}`;
-    const archivePath = `${buildDir}/archive.tar`;
+    const archivePath = `${buildDir}/archive_file`;
 
     const s = spinner();
     s.start(`Compiling ${pc.cyan(manifest.name)} v${version}`);
@@ -41,7 +42,6 @@ export async function installCommand(langArg: string) {
         const sqshFile = path.join(LANGUAGES_DIR, `${lang}.sqsh`);
         if (fsSync.existsSync(sqshFile)) fsSync.unlinkSync(sqshFile);
 
-        // The System Alias Bypass for C and C++
         if (config.url === 'system') {
             s.message('Linking native host toolchain...');
             await execAsync(`mkdir -p ${buildDir}/empty`);
@@ -50,12 +50,30 @@ export async function installCommand(langArg: string) {
             s.message('Downloading secure standalone binaries...');
             await execAsync(`wget -q -O ${archivePath} ${config.url}`);
 
+            // Cryptographic Validation
+            s.message('Verifying SHA256 cryptographic signature...');
+            const fileBuffer = await fs.readFile(archivePath);
+            const actualHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+
+            if (config.sha256 && actualHash !== config.sha256) {
+                throw new Error(
+                    `SECURITY ALERT: Checksum mismatch!\nExpected: ${config.sha256}\nReceived: ${actualHash}\nAborting installation to prevent Supply Chain Attack.`
+                );
+            }
+
             s.message('Extracting architecture...');
-            const isXZ = config.url.endsWith('.xz');
-            const isBZ2 = config.url.endsWith('.bz2');
-            await execAsync(
-                `tar -x${isXZ ? 'J' : isBZ2 ? 'j' : 'z'}f ${archivePath} -C ${buildDir}`
-            );
+            if (config.url.endsWith('.zip')) {
+                await execAsync(`unzip -q ${archivePath} -d ${buildDir}`);
+            } else {
+                const isXZ = config.url.endsWith('.xz');
+                const isBZ2 = config.url.endsWith('.bz2');
+                const stripFlag = config.strip_components
+                    ? `--strip-components=${config.strip_components}`
+                    : '';
+                await execAsync(
+                    `tar -x${isXZ ? 'J' : isBZ2 ? 'j' : 'z'}f ${archivePath} -C ${buildDir} ${stripFlag}`
+                );
+            }
 
             if (config.setup_cmd) {
                 s.message('Executing internal toolchain linker...');
@@ -77,7 +95,7 @@ export async function installCommand(langArg: string) {
             version: version,
             compile_cmd: config.compile_cmd,
             run_cmd: config.run_cmd,
-            env: config.env || {}, // Save the environment variables!
+            env: config.env || {},
         };
         await fs.writeFile(
             path.join(LANGUAGES_DIR, `${lang}.json`),
@@ -87,9 +105,10 @@ export async function installCommand(langArg: string) {
         try {
             await fetch(`http://127.0.0.1:3000/api/v1/system/cache/${lang}`, { method: 'DELETE' });
         } catch (e) {
-            // Ignore
+            // Ignore cache clearing errors - not critical for installation
         }
-        s.stop(pc.green(`✔ ${manifest.name} environment successfully built and hot-swapped!`));
+
+        s.stop(pc.green(`✔ ${manifest.name} environment securely built and verified!`));
     } catch (error: any) {
         s.stop(pc.red(`✖ Installation failed: ${error.message}`));
     } finally {

@@ -5,6 +5,7 @@
         "versions": {
             "3.10.13": {
                 "url": "https://github.com/indygreg/python-build-standalone/releases/download/20240107/cpython-3.10.13+20240107-x86_64-unknown-linux-gnu-install_only.tar.gz",
+                "sha256": "c40d749904089c2d4b77a23df132a113c02114e67d2eaa953d52b8555385b7fa",
                 "extractFolder": "python",
                 "compile_cmd": null,
                 "run_cmd": ["/opt/python3/bin/python3", "{files}"]
@@ -108,6 +109,51 @@
                 "extractFolder": "jdk-21.0.2+13",
                 "compile_cmd": ["/opt/java/bin/javac", "{files}"],
                 "run_cmd": ["/opt/java/bin/java", "Main"]
+            }
+        }
+    },
+    "typescript": {
+        "name": "TypeScript (Deno)",
+        "default_version": "1.41.3",
+        "versions": {
+            "1.41.3": {
+                "url": "https://github.com/denoland/deno/releases/download/v1.41.3/deno-x86_64-unknown-linux-gnu.zip",
+                "sha256": "f5ddf3f455b24d5a4446b6b6a8d6a2c240bf67d0a2946566109e26c053d9944e",
+                "extractFolder": "deno",
+                "compile_cmd": null,
+                "run_cmd": [
+                    "/opt/typescript/deno",
+                    "run",
+                    "--quiet",
+                    "--check",
+                    "--allow-all",
+                    "{files}"
+                ]
+            }
+        }
+    },
+    "bash": {
+        "name": "Bash Script",
+        "default_version": "system",
+        "versions": {
+            "system": {
+                "url": "system",
+                "compile_cmd": null,
+                "run_cmd": ["/bin/bash", "{files}"]
+            }
+        }
+    },
+    "ruby": {
+        "name": "Ruby",
+        "default_version": "3.3.0",
+        "versions": {
+            "3.3.0": {
+                "url": "https://github.com/bazel-contrib/portable-ruby/releases/download/3.3.0-1/ruby-3.3.0.x86_64_linux.tar.gz",
+                "sha256": "43e305a469b569e8fd45244f915f3a0580115d10c1bf025b928c6a03040578da",
+                "strip_components": 1,
+                "extractFolder": ".",
+                "compile_cmd": null,
+                "run_cmd": ["/opt/ruby/bin/ruby", "{files}"]
             }
         }
     }
