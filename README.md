@@ -1,8 +1,8 @@
 <div align="center">
 
-<!-- # <img src="https://chadbox.staticdomains.app/logo-1.png" width="60" height="60" valign="middle"> Chadbox -->
+# <img src="https://chadbox.staticdomains.app/logo-1.png" width="60" height="60" valign="middle"> Chadbox
 
-# 📦 Chadbox
+<!-- # 📦 Chadbox -->
 
 ### Lightweight, Secure, Open-source,and Self-hostable Code execution engine for untrusted code.
 
@@ -526,9 +526,9 @@ server {
 - [ ] Language plugin SDK (community-contributed runtimes)
 - [ ] Web-based dashboard for monitoring
 - [ ] Execution analytics and metrics export (Prometheus)
-    <!-- - [ ] Optional authentication middleware -->
-    <!-- - [ ] Horizontal scaling documentation -->
-    <!-- - [ ] ARM64 / multi-arch Docker builds -->
+      <!-- - [ ] Optional authentication middleware -->
+      <!-- - [ ] Horizontal scaling documentation -->
+      <!-- - [ ] ARM64 / multi-arch Docker builds -->
 
 > Have an idea? [Open an issue](https://github.com/cryptomafiaPB/chadbox/issues) or [start a discussion](https://github.com/cryptomafiaPB/chadbox/discussions).
 
