@@ -5,6 +5,7 @@
         "versions": {
             "3.10.13": {
                 "url": "https://github.com/indygreg/python-build-standalone/releases/download/20240107/cpython-3.10.13+20240107-x86_64-unknown-linux-gnu-install_only.tar.gz",
+                "sha256": "c40d749904089c2d4b77a23df132a113c02114e67d2eaa953d52b8555385b7fa",
                 "extractFolder": "python",
                 "compile_cmd": null,
                 "run_cmd": ["/opt/python3/bin/python3", "{files}"]
@@ -17,12 +18,14 @@
         "versions": {
             "20.11.0": {
                 "url": "https://nodejs.org/dist/v20.11.0/node-v20.11.0-linux-x64.tar.xz",
+                "sha256": "822780369d0ea309e7d218e41debbd1a03f8cdf354ebf8a4420e89f39cc2e612",
                 "extractFolder": "node-v20.11.0-linux-x64",
                 "compile_cmd": null,
                 "run_cmd": ["/opt/nodejs/bin/node", "{files}"]
             },
             "24.16.0": {
                 "url": "https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-x64.tar.xz",
+                "sha256": "d804845d34eddc21dc1092b519d643ef40b1f58ec5dec5c22b1f4bd8fabde6c9",
                 "extractFolder": "node-v24.16.0-linux-x64",
                 "compile_cmd": null,
                 "run_cmd": ["/opt/nodejs/bin/node", "{files}"]
@@ -65,6 +68,7 @@
         "versions": {
             "1.22.1": {
                 "url": "https://go.dev/dl/go1.22.1.linux-amd64.tar.gz",
+                "sha256": "b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w",
                 "extractFolder": "go",
                 "compile_cmd": [
                     "/opt/go/bin/go",
@@ -92,6 +96,7 @@
         "versions": {
             "1.76.0": {
                 "url": "https://static.rust-lang.org/dist/rust-1.76.0-x86_64-unknown-linux-gnu.tar.gz",
+                "sha256": "9d589d2036b503cc45ecc94992d616fb3deec074deb36cacc2f5c212408f7399",
                 "setup_cmd": "cd rust-1.76.0-x86_64-unknown-linux-gnu && ./install.sh --prefix=../rust_env --without=rust-docs",
                 "extractFolder": "rust_env",
                 "compile_cmd": ["/opt/rust/bin/rustc", "-O", "{files}", "-o", "main"],
@@ -105,9 +110,55 @@
         "versions": {
             "21.0.2": {
                 "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jdk_x64_linux_hotspot_21.0.2_13.tar.gz",
+                "sha256": "454bebb2c9fe48d981341461ffb6bf1017c7b7c6e15c6b0c29b959194ba3aaa5",
                 "extractFolder": "jdk-21.0.2+13",
                 "compile_cmd": ["/opt/java/bin/javac", "{files}"],
                 "run_cmd": ["/opt/java/bin/java", "Main"]
+            }
+        }
+    },
+    "typescript": {
+        "name": "TypeScript (Deno)",
+        "default_version": "1.41.3",
+        "versions": {
+            "1.41.3": {
+                "url": "https://github.com/denoland/deno/releases/download/v1.41.3/deno-x86_64-unknown-linux-gnu.zip",
+                "sha256": "f5ddf3f455b24d5a4446b6b6a8d6a2c240bf67d0a2946566109e26c053d9944e",
+                "extractFolder": "deno",
+                "compile_cmd": null,
+                "run_cmd": [
+                    "/opt/typescript/deno",
+                    "run",
+                    "--quiet",
+                    "--check",
+                    "--allow-all",
+                    "{files}"
+                ]
+            }
+        }
+    },
+    "bash": {
+        "name": "Bash Script",
+        "default_version": "system",
+        "versions": {
+            "system": {
+                "url": "system",
+                "compile_cmd": null,
+                "run_cmd": ["/bin/bash", "{files}"]
+            }
+        }
+    },
+    "ruby": {
+        "name": "Ruby",
+        "default_version": "3.3.0",
+        "versions": {
+            "3.3.0": {
+                "url": "https://github.com/bazel-contrib/portable-ruby/releases/download/3.3.0-1/ruby-3.3.0.x86_64_linux.tar.gz",
+                "sha256": "43e305a469b569e8fd45244f915f3a0580115d10c1bf025b928c6a03040578da",
+                "strip_components": 1,
+                "extractFolder": ".",
+                "compile_cmd": null,
+                "run_cmd": ["/opt/ruby/bin/ruby", "{files}"]
             }
         }
     }

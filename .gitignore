@@ -34,5 +34,8 @@ coverage
 # app/language files
 languages
 
+# Local manifest signing key
+packages/cli/src/registry/manifest.key
+
 # Tests
 **/__tests__/**
