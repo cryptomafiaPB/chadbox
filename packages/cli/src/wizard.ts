@@ -99,13 +99,13 @@ export async function startWizard() {
     else if (action === 'benchmark') {
         const lang = await select({
             message: 'Which environment should we stress test?',
-            options: Object.keys(registry).map((key) => ({
-                value: key,
-                label: registry[key].name,
-            })),
+            options: [
+                { value: 'all', label: 'All Installed Languages (Mixed Traffic Simulation)' },
+                ...Object.keys(registry).map((key) => ({ value: key, label: registry[key].name })),
+            ],
         });
         if (isCancel(lang)) return process.exit(0);
-        await benchmarkCommand(lang as string, { concurrent: '50', total: '200' });
+        await benchmarkCommand(lang as string, { concurrent: '20', total: '100' });
     }
 
     outro(pc.green('✔ Operations completed.'));
