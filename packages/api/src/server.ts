@@ -16,6 +16,7 @@ const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
 interface CacheEntry {
     promise: Promise<void>;
     lastAccessed: number;
+    activeRefs: number;
 }
 
 // JavaScript Maps preserve insertion order.
@@ -24,10 +25,11 @@ const globalMountCache = new Map<string, CacheEntry>();
 async function ensureGlobalMount(language: string, sqshPath: string) {
     const now = Date.now();
 
-    // If it exists, update its timestamp and return the promise
+    // If it exists, update its timestamp, increment refs, and return the promise
     if (globalMountCache.has(language)) {
         const entry = globalMountCache.get(language)!;
         entry.lastAccessed = now;
+        entry.activeRefs++;
 
         // Push to the end of the Map to mark as "Most Recently Used"
         globalMountCache.delete(language);
@@ -35,10 +37,22 @@ async function ensureGlobalMount(language: string, sqshPath: string) {
         return entry.promise;
     }
 
-    // LRU Eviction: If we hit the server limit, unmount the oldest language
+    // LRU Eviction: If we hit the server limit, unmount the oldest unused language
     if (globalMountCache.size >= MAX_MOUNTS) {
-        const oldestLang = globalMountCache.keys().next().value;
-        if (oldestLang) await forceUnmount(oldestLang);
+        let oldestLangToEvict: string | null = null;
+        for (const [lang, entry] of globalMountCache.entries()) {
+            if (entry.activeRefs === 0) {
+                oldestLangToEvict = lang;
+                break; // First one found is oldest since Map preserves insertion order
+            }
+        }
+        if (oldestLangToEvict) {
+            await forceUnmount(oldestLangToEvict);
+        } else {
+            fastify.log.warn(
+                `VFS Cache full, but all mounts are busy. Temporarily exceeding MAX_MOUNTS for ${language}`
+            );
+        }
     }
 
     // Create the Mount Promise
@@ -46,7 +60,7 @@ async function ensureGlobalMount(language: string, sqshPath: string) {
         const globalMountPath = path.join('/app/languages/mounts', language);
         await fs.mkdir(globalMountPath, { recursive: true });
         try {
-            await execAsync(`umount -l ${globalMountPath} 2>/dev/null`);
+            await execAsync(`umount ${globalMountPath} 2>/dev/null`);
         } catch (e) {
             // Ignore unmount errors (e.g., if it wasn't mounted)
         }
@@ -54,18 +68,24 @@ async function ensureGlobalMount(language: string, sqshPath: string) {
         fastify.log.info(`💿 Mounted ${language} into VFS Cache.`);
     })();
 
-    globalMountCache.set(language, { promise: mountPromise, lastAccessed: now });
+    globalMountCache.set(language, { promise: mountPromise, lastAccessed: now, activeRefs: 1 });
     await mountPromise;
 }
 
 async function forceUnmount(language: string) {
     if (!globalMountCache.has(language)) return;
+    const entry = globalMountCache.get(language)!;
+    if (entry.activeRefs > 0) return; // Safety check
+
     globalMountCache.delete(language); // Immediately remove from routing
     try {
-        await execAsync(`umount -l /app/languages/mounts/${language}`);
+        await execAsync(`umount /app/languages/mounts/${language}`);
         fastify.log.info(`🧹 Evicted ${language} from VFS Cache.`);
     } catch (e) {
         // Ignore unmount errors (e.g., if it wasn't mounted)
+        fastify.log.warn(
+            `Failed to unmount ${language}: ${e instanceof Error ? e.message : String(e)}`
+        );
     }
 }
 
@@ -74,7 +94,7 @@ setInterval(
     () => {
         const cutoff = Date.now() - IDLE_TIMEOUT_MS;
         for (const [lang, entry] of globalMountCache.entries()) {
-            if (entry.lastAccessed < cutoff) forceUnmount(lang);
+            if (entry.lastAccessed < cutoff && entry.activeRefs === 0) forceUnmount(lang);
         }
     },
     5 * 60 * 1000
@@ -206,6 +226,11 @@ fastify.post('/api/v1/execute', async (request, reply) => {
         fastify.log.error(error);
         return reply.status(500).send({ error: 'Execution failed', details: error.message });
     } finally {
+        if (globalMountCache.has(payload.language)) {
+            const entry = globalMountCache.get(payload.language)!;
+            entry.activeRefs = Math.max(0, entry.activeRefs - 1);
+        }
+
         if (boxId !== undefined) {
             try {
                 await execAsync(`isolate --cleanup --cg --box-id=${boxId}`);
@@ -230,7 +255,7 @@ const shutdown = async () => {
     fastify.log.info('SIGTERM received. Sweeping Mounts...');
     for (const lang of globalMountCache.keys()) {
         try {
-            await execAsync(`umount -l /app/languages/mounts/${lang}`);
+            await execAsync(`umount /app/languages/mounts/${lang}`);
         } catch (e) {
             fastify.log.error(`Failed to unmount ${lang}: ${e}`);
         }
