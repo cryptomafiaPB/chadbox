@@ -12,5 +12,5 @@
         "composite": true
     },
     "references": [{ "path": "../core" }, { "path": "../shared" }],
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "src/**/*.json", "src/**/*.sig"]
 }

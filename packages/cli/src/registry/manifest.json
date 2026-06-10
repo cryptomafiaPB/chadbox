@@ -18,12 +18,14 @@
         "versions": {
             "20.11.0": {
                 "url": "https://nodejs.org/dist/v20.11.0/node-v20.11.0-linux-x64.tar.xz",
+                "sha256": "822780369d0ea309e7d218e41debbd1a03f8cdf354ebf8a4420e89f39cc2e612",
                 "extractFolder": "node-v20.11.0-linux-x64",
                 "compile_cmd": null,
                 "run_cmd": ["/opt/nodejs/bin/node", "{files}"]
             },
             "24.16.0": {
                 "url": "https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-x64.tar.xz",
+                "sha256": "d804845d34eddc21dc1092b519d643ef40b1f58ec5dec5c22b1f4bd8fabde6c9",
                 "extractFolder": "node-v24.16.0-linux-x64",
                 "compile_cmd": null,
                 "run_cmd": ["/opt/nodejs/bin/node", "{files}"]
@@ -66,6 +68,7 @@
         "versions": {
             "1.22.1": {
                 "url": "https://go.dev/dl/go1.22.1.linux-amd64.tar.gz",
+                "sha256": "b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w",
                 "extractFolder": "go",
                 "compile_cmd": [
                     "/opt/go/bin/go",
@@ -93,6 +96,7 @@
         "versions": {
             "1.76.0": {
                 "url": "https://static.rust-lang.org/dist/rust-1.76.0-x86_64-unknown-linux-gnu.tar.gz",
+                "sha256": "9d589d2036b503cc45ecc94992d616fb3deec074deb36cacc2f5c212408f7399",
                 "setup_cmd": "cd rust-1.76.0-x86_64-unknown-linux-gnu && ./install.sh --prefix=../rust_env --without=rust-docs",
                 "extractFolder": "rust_env",
                 "compile_cmd": ["/opt/rust/bin/rustc", "-O", "{files}", "-o", "main"],
@@ -106,6 +110,7 @@
         "versions": {
             "21.0.2": {
                 "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jdk_x64_linux_hotspot_21.0.2_13.tar.gz",
+                "sha256": "454bebb2c9fe48d981341461ffb6bf1017c7b7c6e15c6b0c29b959194ba3aaa5",
                 "extractFolder": "jdk-21.0.2+13",
                 "compile_cmd": ["/opt/java/bin/javac", "{files}"],
                 "run_cmd": ["/opt/java/bin/java", "Main"]

@@ -1,13 +1,40 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { verifyManifestSignature } from './signature.js';
+
+const REGISTRY_DIRECTORIES = [
+    path.join(process.cwd(), 'src/registry'),
+    path.join(process.cwd(), 'dist/registry'),
+    path.dirname(fileURLToPath(import.meta.url)),
+];
+
+function readRegistryAsset(fileName: string): string {
+    for (const registryDirectory of REGISTRY_DIRECTORIES) {
+        const assetPath = path.join(registryDirectory, fileName);
+
+        if (fs.existsSync(assetPath)) {
+            return fs.readFileSync(assetPath, 'utf8');
+        }
+    }
+
+    throw new Error(`Could not find registry asset: ${fileName}`);
+}
 
 export function getLanguageManifest(lang: string) {
-    const manifestPath = path.join(process.cwd(), 'src/registry/manifest.json');
-    //   const manifestPath = path.join(__dirname, 'manifest.json');
     try {
-        const registry = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        const manifestContents = readRegistryAsset('manifest.json');
+        const signatureContents = readRegistryAsset('manifest.sig');
+
+        verifyManifestSignature(manifestContents, signatureContents);
+
+        const registry = JSON.parse(manifestContents);
         return registry[lang] || null;
-    } catch (e) {
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            throw new Error(`Could not load registry manifest: ${error.message}`);
+        }
+
         throw new Error('Could not load registry manifest.');
     }
 }

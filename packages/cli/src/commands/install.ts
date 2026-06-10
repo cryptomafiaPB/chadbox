@@ -3,10 +3,10 @@ import { promisify } from 'util';
 import fsSync from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
-import crypto from 'crypto';
 import { spinner } from '@clack/prompts';
 import pc from 'picocolors';
 import { getLanguageManifest } from '../registry/index.js';
+import { verifyDownloadedArchiveChecksum } from './install-security.js';
 
 const execAsync = promisify(exec);
 const LANGUAGES_DIR = '/app/languages';
@@ -50,16 +50,8 @@ export async function installCommand(langArg: string) {
             s.message('Downloading secure standalone binaries...');
             await execAsync(`wget -q -O ${archivePath} ${config.url}`);
 
-            // Cryptographic Validation
-            s.message('Verifying SHA256 cryptographic signature...');
-            const fileBuffer = await fs.readFile(archivePath);
-            const actualHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
-
-            if (config.sha256 && actualHash !== config.sha256) {
-                throw new Error(
-                    `SECURITY ALERT: Checksum mismatch!\nExpected: ${config.sha256}\nReceived: ${actualHash}\nAborting installation to prevent Supply Chain Attack.`
-                );
-            }
+            s.message('Verifying SHA256 checksum...');
+            await verifyDownloadedArchiveChecksum(archivePath, config.sha256);
 
             s.message('Extracting architecture...');
             if (config.url.endsWith('.zip')) {
