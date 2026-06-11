@@ -69,7 +69,7 @@ export class Sandbox {
             `--stdin=stdin.txt`,
             `--stdout=${options.stage}_stdout.txt`,
             `--stderr=${options.stage}_stderr.txt`,
-            `--dir=/etc/alternatives=/etc/alternatives:ro`,
+            `--dir=/etc/alternatives=/etc/alternatives`,
             `--env=HOME=/box`,
             `--env=PATH=${binDir}:/bin:/usr/bin:/usr/local/bin`, // Dynamic PATH injection
             `--meta=${metaFile}`,
@@ -83,7 +83,7 @@ export class Sandbox {
 
         if (this.config.mounts) {
             for (const m of this.config.mounts) {
-                isolateArgs.push(`--dir=${m.dest}=${m.src}:ro`);
+                isolateArgs.push(`--dir=${m.dest}=${m.src}`);
             }
         }
 
