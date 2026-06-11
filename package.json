@@ -12,7 +12,6 @@
         "test": "pnpm --filter @chadbox/core run test",
         "test:core": "pnpm --filter @chadbox/core run test",
         "test:cli": "pnpm --filter @chadbox/cli run test",
-        "sign:manifest": "pnpm --filter @chadbox/cli run sign-manifest",
         "test:chaos": "tsx packages/api/src/__tests__/chaos_2.ts",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",

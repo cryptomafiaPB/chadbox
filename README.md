@@ -69,15 +69,15 @@ That's it. You're live on `http://localhost:3000`.
 
 There are other code execution engines. Here's why Chadbox exists:
 
-|                      | **Chadbox**                                            | **Piston**      | **Judge0**                          |
-| -------------------- | ------------------------------------------------------ | --------------- | ----------------------------------- |
-| **Isolation**        | `isolate` (IOI battle-tested, kernel-level cgroups v2) | `nsjail`        | `isolate`                           |
-| **Language Bundles** | SquashFS — read-only, immutable, loop-mounted          | Copied to disk  | Docker images                       |
-| **Mount Strategy**   | LRU VFS cache with lazy mount/eviction                 | Static          | Per-container                       |
-| **Concurrency**      | Adaptive pool with backpressure & memory-aware queuing | Fixed workers   | Queue-based                         |
-| **Stack**            | TypeScript monorepo, Fastify, Zod schemas              | Python/Bash mix | Ruby on Rails                       |
-| **Self-Hosting**     | Single `docker compose up`                             | Custom setup    | Requires Redis, PostgreSQL, workers |
-| **Philosophy**       | Minimal. One container. No database. No queue.         | Minimal         | Full platform                       |
+|                      | **Chadbox**                                            | **Piston**          | **Judge0**                          |
+| -------------------- | ------------------------------------------------------ | ------------------- | ----------------------------------- |
+| **Isolation**        | `isolate` (IOI battle-tested, kernel-level cgroups v2) | `isolate`           | `isolate`                           |
+| **Language Bundles** | SquashFS — read-only, immutable, loop-mounted          | Copied to disk      | Docker images                       |
+| **Mount Strategy**   | LRU VFS cache with lazy mount/eviction                 | Static              | Per-container                       |
+| **Concurrency**      | Adaptive pool with backpressure & memory-aware queuing | Fixed workers       | Queue-based                         |
+| **Stack**            | TypeScript monorepo, Fastify, Zod schemas              | Javascript/Bash mix | Ruby on Rails                       |
+| **Self-Hosting**     | Single `docker compose up`                             | Custom setup        | Requires Redis, PostgreSQL, workers |
+| **Philosophy**       | Minimal. One container. No database. No queue.         | Minimal             | Full platform                       |
 
 **Chadbox's bet**: You don't need a database, a message queue, or a cluster of worker containers to run code safely. You need a single container that knows how to talk to the Linux kernel.
 
@@ -360,10 +360,9 @@ Fires 100 execution requests with 20 concurrent workers and reports throughput, 
 
 Chadbox is configured through environment variables. Set them in your `docker-compose.yml` or shell.
 
-| Variable               | Default | Description                                                                            |
-| ---------------------- | ------- | -------------------------------------------------------------------------------------- |
-| `CHADBOX_MAX_MOUNTS`   | `10`    | Maximum number of language bundles mounted simultaneously. Oldest are evicted via LRU. |
-| `MANIFEST_SIGNING_KEY` | —       | HMAC key used by the CLI to sign and verify language manifest integrity.               |
+| Variable             | Default | Description                                                                            |
+| -------------------- | ------- | -------------------------------------------------------------------------------------- |
+| `CHADBOX_MAX_MOUNTS` | `10`    | Maximum number of language bundles mounted simultaneously. Oldest are evicted via LRU. |
 
 ### Resource Limits (per-request)
 
@@ -517,7 +516,6 @@ server {
 
 ### 🚧 In Progress
 
-- [ ] Signed language manifests (HMAC verification)
 - [ ] Additional language support
 
 ### 🔮 Planned

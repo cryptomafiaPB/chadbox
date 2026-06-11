@@ -14,8 +14,7 @@
         "start": "node dist/index.js",
         "start:dev": "tsx src/index.ts",
         "test": "node --import tsx --test src/commands/install.test.ts",
-        "type-check": "tsc --noEmit",
-        "sign-manifest": "tsx src/registry/sign-manifest.ts"
+        "type-check": "tsc --noEmit"
     },
     "keywords": [
         "code-execution",

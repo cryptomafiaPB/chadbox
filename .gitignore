@@ -22,6 +22,9 @@ coverage
 .logs/
 
 .claude/
+.gemini/
+.liteclient/
+.vscode/
 
 # Ignore all MD (markdown) files except README.md, CONTRIBUTING.md, and .github/ directory
 *.md
@@ -29,13 +32,11 @@ coverage
 # !CONTRIBUTING.md
 !.github/**
 
+
 .excalidraw
 
 # app/language files
 languages
-
-# Local manifest signing key
-packages/cli/src/registry/manifest.key
 
 # Tests
 **/__tests__/**
