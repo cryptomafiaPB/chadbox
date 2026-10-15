@@ -8,6 +8,7 @@
     "scripts": {
         "build": "tsc -b",
         "dev": "tsc -b -w",
+        "test": "node --import tsx --test ../../tests/unit/config.test.ts",
         "type-check": "tsc --noEmit"
     },
     "keywords": [
