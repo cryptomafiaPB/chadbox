@@ -1,8 +1,25 @@
 import { z } from 'zod';
 
+export const SafeFileNameSchema = z
+    .string()
+    .min(1, 'Filename must not be empty')
+    .max(255, 'Filename must not exceed 255 characters')
+    .refine((name) => !name.includes('\0'), {
+        message: 'Filename must not contain null bytes',
+    })
+    .refine((name) => !/^[/\\]/.test(name), {
+        message: 'Filename must be a relative path, cannot start with / or \\',
+    })
+    .refine((name) => !/(^|[/\\])\.\.([/\\]|$)/.test(name), {
+        message: 'Filename must not contain path traversal segments (..)',
+    })
+    .refine((name) => !/^[a-zA-Z]:/.test(name), {
+        message: 'Filename must not contain Windows drive specifiers',
+    });
+
 // Validates the files array being passed into the execution engine.
 export const FileSchema = z.object({
-    name: z.string().optional(),
+    name: SafeFileNameSchema.optional(),
     content: z.string(),
     encoding: z.enum(['utf8', 'base64', 'hex']).default('utf8'),
 });
@@ -53,3 +70,5 @@ export type FilePayload = z.infer<typeof FileSchema>;
 export type ExecutionRequest = z.infer<typeof ExecutionRequestSchema>;
 export type StageResult = z.infer<typeof StageResultSchema>;
 export type ExecutionResponse = z.infer<typeof ExecutionResponseSchema>;
+
+export * from './config.js';
