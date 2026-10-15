@@ -11,7 +11,7 @@ dist
 
 # Test
 test.ts
-test*
+/test.*
 coverage
 *.tsbuildinfo
 
