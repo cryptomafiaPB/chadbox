@@ -1,0 +1,301 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Sansation';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/Sansation-Light.woff') format('woff'),
+       url('https://fonts.cdnfonts.com/s/382/Sansation_Light.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Sansation';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Sansation-Regular.woff') format('woff'),
+       url('https://fonts.cdnfonts.com/s/382/Sansation-Regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Sansation';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Sansation-Bold.woff') format('woff'),
+       url('https://fonts.cdnfonts.com/s/382/Sansation-Bold.woff') format('woff');
+}
+
+@layer base {
+  :root {
+    --bg-canvas: #0B0D0E;
+    --bg-surface: #141719;
+    --border-subtle: #22272B;
+    --accent-emerald: #10B981;
+    --accent-mint: #00F59B;
+    --terminal-green: #34D399;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+    background-color: #0B0D0E;
+  }
+
+  body {
+    background-color: #0B0D0E;
+    color: #F3F4F6;
+    overflow-x: hidden;
+    font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  button, input, select, textarea {
+    font-family: inherit;
+  }
+
+  h1, h2, h3, h4, .font-title {
+    font-family: 'Sansation', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+/* Subtle Grid Background - scoped strictly to Hero fold, fading out completely as the hero section ends */
+.hero-grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 560px;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.06) 1px, transparent 0),
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px, 48px 48px, 48px 48px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.85) 45%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.85) 45%, transparent 100%);
+}
+
+/* Ambient Emerald Glow Blobs */
+.ambient-glow {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #10B981 0%, #00F59B 35%, transparent 70%);
+  filter: blur(140px);
+}
+
+/* Hero & Navbar Top-Left Illumination (fades out smoothly well above Dual Product Ecosystem) */
+.hero-illumination-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 440px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 35%, transparent 75%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 35%, transparent 75%);
+}
+
+.hero-illumination {
+  position: absolute;
+  top: -120px;
+  left: -80px;
+  width: 1050px;
+  height: 800px;
+  max-width: 100vw;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 65% 55% at 25% 25%,
+    rgba(0, 245, 155, 0.22) 0%,
+    rgba(16, 185, 129, 0.16) 30%,
+    rgba(5, 150, 105, 0.08) 55%,
+    rgba(2, 44, 34, 0.02) 75%,
+    transparent 85%
+  );
+  filter: blur(95px);
+}
+
+.hero-illumination-core {
+  position: absolute;
+  top: -60px;
+  left: -40px;
+  width: 600px;
+  height: 520px;
+  max-width: 85vw;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 25%,
+    rgba(0, 245, 155, 0.18) 0%,
+    rgba(16, 185, 129, 0.10) 40%,
+    transparent 70%
+  );
+  filter: blur(65px);
+}
+
+.ambient-glow-hero {
+  top: -50px;
+  left: 0;
+  width: 750px;
+  height: 550px;
+  opacity: 0.12;
+}
+
+.ambient-glow-arch {
+  top: 48%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 480px;
+  opacity: 0.11;
+}
+
+.ambient-glow-pricing {
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 650px;
+  height: 420px;
+  opacity: 0.10;
+}
+
+/* Interactive Cursor Proximity Card (only for clickable cards) */
+.glow-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+    rgba(16, 185, 129, 0.09),
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+/* Subtle Scroll Reveal Transition */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Diagram Animations: Floating Isometric Sandbox Box */
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float-gentle {
+  animation: float-gentle 4.5s ease-in-out infinite;
+}
+
+/* Diagram Animations: Speed Dial Gauge Ambient Glow Breathing */
+@keyframes dial-pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+.animate-dial-pulse {
+  transform-origin: 160px 140px;
+  animation: dial-pulse 3.5s ease-in-out infinite;
+}
+
+/* Dotted Projection Flow */
+@keyframes projection-dash {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+.animate-projection-flow {
+  animation: projection-dash 1.8s linear infinite;
+}
+
+/* Terminal Cursor Blink */
+@keyframes terminal-blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.animate-terminal-cursor {
+  animation: terminal-blink 1s step-start infinite;
+}
+
+/* Shimmer on CTA button / Featured Badge */
+@keyframes shimmer-sweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.badge-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 245, 155, 0.9) 0%,
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(0, 245, 155, 0.9) 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer-sweep 4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .animate-float-gentle,
+  .animate-dial-pulse,
+  .animate-projection-flow,
+  .animate-terminal-cursor,
+  .badge-shimmer {
+    animation: none !important;
+  }
+}
+

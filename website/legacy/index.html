@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chadbox — Zero-Overhead, Kernel-Isolated Untrusted Code Execution</title>
+  <meta name="description" content="Ultra-fast, hyper-secure untrusted code execution sandbox engine. Run Python, Node, Go, Rust, C++ in sub-45ms using direct Linux cgroups and SquashFS mounts.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+  <!-- Background Textures & Ambient Glows -->
+  <div class="bg-grid-overlay" aria-hidden="true"></div>
+  <div class="ambient-glow ambient-glow-hero" aria-hidden="true"></div>
+  <div class="ambient-glow ambient-glow-arch" aria-hidden="true"></div>
+  <div class="ambient-glow ambient-glow-pricing" aria-hidden="true"></div>
+
+  <!-- Sticky Navigation Header -->
+  <header class="site-header">
+    <div class="nav-container">
+      <div class="brand-wrapper">
+        <a href="#hero" class="brand-logo" aria-label="Chadbox Homepage">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="4" />
+            <path d="m8 10 3 2-3 2" />
+            <path d="M13 14h3" />
+          </svg>
+          <span>CHADBOX</span>
+        </a>
+        <div class="status-indicator">
+          <span class="pulse-dot"></span>
+          <span>System Healthy / v1.0</span>
+        </div>
+      </div>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#hero" class="nav-link">Overview</a></li>
+          <li><a href="#dual-track" class="nav-link">Integration</a></li>
+          <li><a href="#scenarios" class="nav-link">Use Cases</a></li>
+          <li><a href="#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="#principles" class="nav-link">Principles</a></li>
+          <li><a href="#comparison" class="nav-link">Matrix</a></li>
+          <li><a href="#runtimes" class="nav-link">Runtimes</a></li>
+          <li><a href="#pricing" class="nav-link">Pricing</a></li>
+          <li><a href="#faq" class="nav-link">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="https://github.com/chadbox/chadbox" target="_blank" rel="noopener noreferrer" class="btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <button type="button" class="btn-primary-gradient" id="navGetApiKeyBtn">
+          <span>Get API Key</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. Hero Section -->
+    <section id="hero" class="hero-section">
+      <div class="container">
+        <div class="hero-content reveal">
+          <div class="hero-eyebrow">
+            <span class="hero-eyebrow-accent">CORE + CLOUD</span>
+            <span>Open-Source Engine + Production-Ready Cloud API</span>
+          </div>
+
+          <h1 class="hero-title">
+            Zero-Overhead.<br>
+            <span class="text-gradient">Hyper-Secure</span> Untrusted Code Execution.
+          </h1>
+
+          <p class="hero-subtitle">
+            Run arbitrary user and model code with strict Linux namespace isolation in under 45ms.
+            Self-host the single-container core or stream executions globally through our managed cloud API.
+          </p>
+
+          <div class="hero-ctas">
+            <button type="button" class="btn-primary-gradient btn-large" id="heroStartFreeBtn">
+              <span>Start Cloud Free</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </button>
+            <a href="https://github.com/chadbox/chadbox" target="_blank" rel="noopener noreferrer" class="btn-matte-glass">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+              <span>View on GitHub</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Visual Centerpiece: Interactive Code Terminal Card -->
+        <div class="terminal-window reveal">
+          <div class="terminal-header">
+            <div class="terminal-controls">
+              <span class="mac-dot close"></span>
+              <span class="mac-dot min"></span>
+              <span class="mac-dot max"></span>
+            </div>
+            <div class="terminal-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="18" height="18" x="3" y="3" rx="2"/>
+                <path d="m9 8 4 4-4 4"/>
+              </svg>
+              <span>sandbox-worker-01.internal &mdash; POST /v1/execute</span>
+            </div>
+            <div class="terminal-actions">
+              <button type="button" class="run-btn" id="runSimulationBtn" title="Run sandbox execution (Key: R)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                <span id="runBtnLabel">Run Execution</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="terminal-tabs">
+            <button type="button" class="terminal-tab-btn active" data-lang="python">Python 3.12 (Multi-file)</button>
+            <button type="button" class="terminal-tab-btn" data-lang="rust">Rust 1.78</button>
+            <button type="button" class="terminal-tab-btn" data-lang="node">Node.js 22</button>
+          </div>
+
+          <div class="terminal-body">
+            <!-- Left Pane: JSON Request Payload -->
+            <div class="terminal-pane pane-left">
+              <div class="pane-label">
+                <span>Payload (JSON)</span>
+                <span>cgroup: memory=128M</span>
+              </div>
+              <pre id="terminalPayloadCode"><code class="code-line">{
+  <span class="token-key">"language"</span>: <span class="token-str">"python"</span>,
+  <span class="token-key">"version"</span>: <span class="token-str">"3.12.3"</span>,
+  <span class="token-key">"files"</span>: [
+    {
+      <span class="token-key">"name"</span>: <span class="token-str">"main.py"</span>,
+      <span class="token-key">"content"</span>: <span class="token-str">"from helper import evaluate\nprint(evaluate(42))"</span>
+    },
+    {
+      <span class="token-key">"name"</span>: <span class="token-str">"helper.py"</span>,
+      <span class="token-key">"content"</span>: <span class="token-str">"def evaluate(n):\n  return {'status': 'sanitized', 'entropy': n * 1337}"</span>
+    }
+  ],
+  <span class="token-key">"timeout_ms"</span>: <span class="token-num">1500</span>,
+  <span class="token-key">"network"</span>: <span class="token-bool">false</span>
+}</code></pre>
+            </div>
+
+            <!-- Right Pane: Live Execution Telemetry & Stdout -->
+            <div class="terminal-pane pane-right">
+              <div class="pane-label">
+                <span>Kernel Telemetry</span>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <span class="status-chip ok" id="terminalStatusChip">200 OK</span>
+                  <span class="latency-badge" id="terminalLatencyBadge">38.4ms</span>
+                </div>
+              </div>
+
+              <div class="output-console" id="terminalOutputConsole">
+[cgroups] namespace initialized (pid=408221)
+[squashfs] mounted python:3.12 (ro,nodev,nosuid) in 4.2ms
+[seccomp] loaded 128 blocked syscalls
+[exec] worker process started
+--------------------------------------------------
+{'status': 'sanitized', 'entropy': 56154}
+--------------------------------------------------
+[exit] returncode: 0 | memory_peak: 14.8MB
+[cleanup] cgroup destroyed & namespace unmounted in 1.1ms
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Dual-Track Integration -->
+    <section id="dual-track">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-tag">Integration Tracks</div>
+          <h2 class="section-title">Two Tracks. Zero Friction.</h2>
+          <p class="section-subtitle">
+            Deploy self-contained sandboxes on your bare metal, or plug directly into our edge-distributed cloud API.
+          </p>
+        </div>
+
+        <div class="integration-switch-wrapper reveal">
+          <div class="switch-pill-container" role="tablist" aria-label="Code track selection">
+            <button type="button" class="switch-pill-btn active" id="tabCoreBtn" role="tab" aria-selected="true">Track A: Open-Source Core</button>
+            <button type="button" class="switch-pill-btn" id="tabCloudBtn" role="tab" aria-selected="false">Track B: Cloud API Service</button>
+          </div>
+        </div>
+
+        <div class="dual-track-grid">
+          <!-- Track A Card -->
+          <div class="glow-card track-card reveal" id="trackCardCore">
+            <div class="track-header">
+              <span class="track-badge core">Self-Hosted Core</span>
+              <span style="font-size: 0.8rem; color: var(--text-dim); font-family: var(--font-mono);">AGPLv3</span>
+            </div>
+            <h3 class="track-title">Open-Source Engine</h3>
+            <p class="track-desc">
+              A single Linux container with native cgroup v2 control, zero external brokers, and read-only SquashFS mounts. Perfect for on-premise clusters and sensitive compliance boundaries.
+            </p>
+            <ul class="track-specs">
+              <li class="spec-item">
+                <svg class="spec-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                <span>Zero external dependencies: No Redis, Postgres, or Celery</span>
+              </li>
+              <li class="spec-item">
+                <svg class="spec-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                <span>Direct kernel cgroup v2 memory and CPU quotas</span>
+              </li>
+              <li class="spec-item">
+                <svg class="spec-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                <span>Single binary or single Docker image rollout</span>
+              </li>
+            </ul>
+
+            <div class="snippet-box">
+              <div class="snippet-top">
+                <span>DOCKER CLI</span>
+                <button type="button" class="copy-btn" data-copy="docker run -d -p 8080:8080 --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:rw ghcr.io/chadbox/engine:latest">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="snippet-code">docker run -d -p 8080:8080 --privileged \
+  -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
+  ghcr.io/chadbox/engine:latest</pre>
+            </div>
+          </div>
+
+          <!-- Track B Card -->
+          <div class="glow-card track-card reveal" id="trackCardCloud">
+            <div class="track-header">
+              <span class="track-badge cloud">Managed Cloud</span>
+              <span style="font-size: 0.8rem; color: var(--text-dim); font-family: var(--font-mono);">Global Endpoints</span>
+            </div>
+            <h3 class="track-title">Managed Cloud API</h3>
+            <p class="track-desc">
+              Production-ready serverless execution endpoints globally routed with auto-scaling pools, automatic warm language containers, and enterprise rate enforcement.
+            </p>
+            <ul class="track-specs">
+              <li class="spec-item">
+                <svg class="spec-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                <span>Sub-40ms warm execution across 12 global regions</span>
+              </li>
+              <li class="spec-item">
+                <svg class="spec-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                <span>Built-in DDoS protection and token quota budgeting</span>
+              </li>
+              <li class="spec-item">
+                <svg class="spec-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M20 6 9 17l-5-5"/>
+                </svg>
+                <span>Multi-tenant isolation backed by dedicated micro-VM hosts</span>
+              </li>
+            </ul>
+
+            <div class="snippet-box">
+              <div class="snippet-top">
+                <span>CURL API</span>
+                <button type="button" class="copy-btn" data-copy="curl -X POST https://api.chadbox.io/v1/execute -H 'Authorization: Bearer cb_live_demo' -H 'Content-Type: application/json' -d '{&quot;language&quot;:&quot;python&quot;,&quot;files&quot;:[{&quot;name&quot;:&quot;main.py&quot;,&quot;content&quot;:&quot;print(42)&quot;}]}'">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <pre class="snippet-code">curl -X POST https://api.chadbox.io/v1/execute \
+  -H "Authorization: Bearer cb_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{"language":"python","files":[{"name":"main.py","content":"print(42)"}]}'</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Application Scenarios (Bento Grid) -->
+    <section id="scenarios">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-tag">Target Workloads</div>
+          <h2 class="section-title">Engineered for Harsh Workloads</h2>
+          <p class="section-subtitle">
+            From autonomous agents writing arbitrary scripts to high-throughput grading pipelines.
+          </p>
+        </div>
+
+        <div class="bento-grid">
+          <!-- Bento 1: AI Agents -->
+          <div class="glow-card bento-card reveal">
+            <div class="bento-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 8V4H8"/>
+                <rect width="16" height="12" x="4" y="8" rx="2"/>
+                <path d="M2 14h2"/>
+                <path d="M20 14h2"/>
+                <path d="M15 13v2"/>
+                <path d="M9 13v2"/>
+              </svg>
+            </div>
+            <h3 class="bento-title">AI Agents &amp; Code Interpreters</h3>
+            <p class="bento-desc">
+              Give autonomous LLMs execution capabilities without risking host compromise. Ephemeral environments spin up, run, and self-destruct in milliseconds.
+            </p>
+            <div class="bento-telemetry">
+              <div class="telemetry-row">
+                <span>Network Policy:</span>
+                <span class="telemetry-val">Default Deny (Host Unreachable)</span>
+              </div>
+              <div class="telemetry-row">
+                <span>Filesystem:</span>
+                <span class="telemetry-val">Scratch tmpfs (Auto-Purged)</span>
+              </div>
+              <div class="telemetry-row">
+                <span>Warmup Overhead:</span>
+                <span class="telemetry-val">&lt; 14ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento 2: EdTech & Competitive Programming -->
+          <div class="glow-card bento-card reveal">
+            <div class="bento-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                <path d="M4 22h16"/>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"/>
+                <path d="M14 14.66V17c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.34"/>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+              </svg>
+            </div>
+            <h3 class="bento-title">Grading &amp; Coding Platforms</h3>
+            <p class="bento-desc">
+              Execute thousands of student submissions concurrently with microsecond-level CPU time accounting, memory watermarking, and deterministic verdict reporting.
+            </p>
+            <div class="bento-telemetry">
+              <div class="telemetry-row">
+                <span>CPU Accounting:</span>
+                <span class="telemetry-val">cgroup cpu.stat (microsecond)</span>
+              </div>
+              <div class="telemetry-row">
+                <span>OOM Trap:</span>
+                <span class="telemetry-val">SIGKILL on RAM Threshold</span>
+              </div>
+              <div class="telemetry-row">
+                <span>Throughput:</span>
+                <span class="telemetry-val">1,200 req/sec per node</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento 3: Indie Hackers & Lean Platforms -->
+          <div class="glow-card bento-card reveal">
+            <div class="bento-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+              </svg>
+            </div>
+            <h3 class="bento-title">Lean Startups &amp; Developers</h3>
+            <p class="bento-desc">
+              Bypass Kubernetes complexity and Nomad orchestration overhead. Run a full multi-language sandbox cluster from a single $10/month VPS instance.
+            </p>
+            <div class="bento-telemetry">
+              <div class="telemetry-row">
+                <span>Infrastructure:</span>
+                <span class="telemetry-val">1 Docker Container</span>
+              </div>
+              <div class="telemetry-row">
+                <span>Base RAM Footprint:</span>
+                <span class="telemetry-val">42 MB Idle</span>
+              </div>
+              <div class="telemetry-row">
+                <span>Setup Time:</span>
+                <span class="telemetry-val">90 Seconds</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Architecture & Execution Lifecycle -->
+    <section id="architecture">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-tag">Execution Lifecycle</div>
+          <h2 class="section-title">Sub-Millisecond Pipeline Architecture</h2>
+          <p class="section-subtitle">
+            Trace how a request transforms from raw JSON to isolated kernel namespaces with zero intermediate database locks.
+          </p>
+        </div>
+
+        <div class="arch-card reveal">
+          <div class="arch-controls">
+            <div>
+              <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">
+                Execution Path Simulation:
+              </span>
+            </div>
+            <div class="arch-path-selector">
+              <button type="button" class="path-btn active success" data-path="success">
+                200 OK (Clean Exit)
+              </button>
+              <button type="button" class="path-btn" data-path="validation">
+                400 Bad Request
+              </button>
+              <button type="button" class="path-btn" data-path="capacity">
+                429 Concurrency Gate
+              </button>
+            </div>
+          </div>
+
+          <!-- SVG Pipeline Diagram -->
+          <div class="pipeline-viewport">
+            <svg class="pipeline-svg" viewBox="0 0 960 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="beamGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#10B981"/>
+                  <stop offset="100%" stop-color="#00F59B"/>
+                </linearGradient>
+                <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              <!-- Main Execution Track Background Path -->
+              <path class="tracer-path" d="M 80 80 L 260 80 L 460 80 L 660 80 L 860 80" />
+              <!-- Animated Tracer Beam -->
+              <path class="tracer-beam" id="tracerBeamElement" d="M 80 80 L 260 80 L 460 80 L 660 80 L 860 80" />
+
+              <!-- Failure Branch 1 (400) -->
+              <path d="M 260 80 L 260 135" stroke="rgba(239, 68, 68, 0.35)" stroke-width="2" stroke-dasharray="4 4" id="failPath400"/>
+              <!-- Failure Branch 2 (429) -->
+              <path d="M 460 80 L 460 135" stroke="rgba(245, 158, 11, 0.35)" stroke-width="2" stroke-dasharray="4 4" id="failPath429"/>
+
+              <!-- Node 1: POST /v1/execute -->
+              <g class="pipeline-node" data-node="node-ingest" transform="translate(20, 45)">
+                <rect width="120" height="70" rx="8" fill="#141719" stroke="#22272B" stroke-width="1"/>
+                <text x="60" y="32" fill="#F3F4F6" font-size="11" font-weight="700" text-anchor="middle" font-family="ui-monospace">POST</text>
+                <text x="60" y="48" fill="#9CA3AF" font-size="10" text-anchor="middle" font-family="ui-monospace">/v1/execute</text>
+              </g>
+
+              <!-- Node 2: JSON Schema Validation -->
+              <g class="pipeline-node" data-node="node-validate" transform="translate(200, 45)">
+                <rect width="130" height="70" rx="8" fill="#141719" stroke="#22272B" stroke-width="1"/>
+                <text x="65" y="32" fill="#F3F4F6" font-size="11" font-weight="700" text-anchor="middle" font-family="ui-monospace">Schema</text>
+                <text x="65" y="48" fill="#9CA3AF" font-size="10" text-anchor="middle" font-family="ui-monospace">Fast Validation</text>
+              </g>
+
+              <!-- Branch 400 Tag -->
+              <g id="tag400" transform="translate(225, 138)">
+                <rect width="80" height="26" rx="4" fill="rgba(239, 68, 68, 0.15)" stroke="#EF4444" stroke-width="1"/>
+                <text x="40" y="17" fill="#FCA5A5" font-size="9.5" font-weight="600" text-anchor="middle" font-family="ui-monospace">400 Bad Req</text>
+              </g>
+
+              <!-- Node 3: Concurrency & RAM Gate -->
+              <g class="pipeline-node" data-node="node-gate" transform="translate(400, 45)">
+                <rect width="130" height="70" rx="8" fill="#141719" stroke="#22272B" stroke-width="1"/>
+                <text x="65" y="32" fill="#F3F4F6" font-size="11" font-weight="700" text-anchor="middle" font-family="ui-monospace">RAM &amp; CPU Gate</text>
+                <text x="65" y="48" fill="#9CA3AF" font-size="10" text-anchor="middle" font-family="ui-monospace">cgroup Allocator</text>
+              </g>
+
+              <!-- Branch 429 Tag -->
+              <g id="tag429" transform="translate(425, 138)">
+                <rect width="80" height="26" rx="4" fill="rgba(245, 158, 11, 0.15)" stroke="#F59E0B" stroke-width="1"/>
+                <text x="40" y="17" fill="#FCD34D" font-size="9.5" font-weight="600" text-anchor="middle" font-family="ui-monospace">429 Wait/Drop</text>
+              </g>
+
+              <!-- Node 4: Language Mount (LRU Cache) -->
+              <g class="pipeline-node" data-node="node-mount" transform="translate(600, 45)">
+                <rect width="130" height="70" rx="8" fill="#141719" stroke="#22272B" stroke-width="1"/>
+                <text x="65" y="32" fill="#F3F4F6" font-size="11" font-weight="700" text-anchor="middle" font-family="ui-monospace">SquashFS Mount</text>
+                <text x="65" y="48" fill="#9CA3AF" font-size="10" text-anchor="middle" font-family="ui-monospace">LRU Read-Only</text>
+              </g>
+
+              <!-- Node 5: Sandbox Execution -->
+              <g class="pipeline-node" data-node="node-exec" transform="translate(800, 45)">
+                <rect width="130" height="70" rx="8" fill="#141719" stroke="#10B981" stroke-width="1.5"/>
+                <text x="65" y="32" fill="#00F59B" font-size="11" font-weight="700" text-anchor="middle" font-family="ui-monospace">Isolated Exec</text>
+                <text x="65" y="48" fill="#34D399" font-size="10" text-anchor="middle" font-family="ui-monospace">200 OK Verdict</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Dynamic Node Inspector -->
+          <div class="pipeline-inspector" id="pipelineInspector">
+            <div class="inspector-info">
+              <h4 id="inspectorNodeTitle">Sandbox Execution (cgroup v2 &amp; namespaces)</h4>
+              <p id="inspectorNodeDesc">The payload process executes within dedicated mount, UTS, IPC, PID, and net namespaces with strict memory limits.</p>
+            </div>
+            <div class="inspector-metrics">
+              <div class="metric-pill">Latency: <span id="inspectorLatency">~31.2ms</span></div>
+              <div class="metric-pill">Isolation: <span id="inspectorIsolation">L3 Kernel</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Core Engineering Principles -->
+    <section id="principles">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-tag">Design Principles</div>
+          <h2 class="section-title">Architected for Speed &amp; Hardness</h2>
+          <p class="section-subtitle">
+            Every layer exists for a measurable reason. No bloat, no layers of indirection.
+          </p>
+        </div>
+
+        <div class="principles-grid">
+          <!-- Pillar 1 -->
+          <div class="glow-card principle-card reveal">
+            <div class="principle-accent-line"></div>
+            <div class="principle-number">PRINCIPLE // 01</div>
+            <h3 class="principle-title">Kernel-Level Isolation</h3>
+            <p class="principle-desc">
+              Chadbox interacts directly with Linux kernel primitives (cgroup v2, seccomp filters, and namespaces) without intermediate hypervisor or daemon bloat.
+            </p>
+            <span class="principle-code-badge">clone(CLONE_NEWPID | CLONE_NEWNET)</span>
+          </div>
+
+          <!-- Pillar 2 -->
+          <div class="glow-card principle-card reveal">
+            <div class="principle-accent-line"></div>
+            <div class="principle-number">PRINCIPLE // 02</div>
+            <h3 class="principle-title">Immutable Language Bundles</h3>
+            <p class="principle-desc">
+              Runtimes are packaged as immutable SquashFS images. Sandboxes mount them read-only via loop devices, making tampering or runtime pollution impossible.
+            </p>
+            <span class="principle-code-badge">mount -o ro,loop python3.12.sqfs</span>
+          </div>
+
+          <!-- Pillar 3 -->
+          <div class="glow-card principle-card reveal">
+            <div class="principle-accent-line"></div>
+            <div class="principle-number">PRINCIPLE // 03</div>
+            <h3 class="principle-title">Zero External Dependencies</h3>
+            <p class="principle-desc">
+              No Postgres, Redis, RabbitMQ, or Celery queues required. The core engine is a single self-sufficient binary with lockless internal ring buffers.
+            </p>
+            <span class="principle-code-badge">docker run --privileged</span>
+          </div>
+
+          <!-- Pillar 4 -->
+          <div class="glow-card principle-card reveal">
+            <div class="principle-accent-line"></div>
+            <div class="principle-number">PRINCIPLE // 04</div>
+            <h3 class="principle-title">Fail-Safe Under Pressure</h3>
+            <p class="principle-desc">
+              Adaptive memory backpressure rejects incoming bursts before host resource thrashing occurs. Memory thresholds cleanly trigger SIGKILL without host cascade.
+            </p>
+            <span class="principle-code-badge">memory.max &amp; cpu.max enforcement</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Head-to-Head Technical Matrix -->
+    <section id="comparison">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-tag">Technical Matrix</div>
+          <h2 class="section-title">Chadbox vs. The Alternatives</h2>
+          <p class="section-subtitle">
+            See how single-container architecture outperforms legacy multi-service runners.
+          </p>
+        </div>
+
+        <div class="matrix-card reveal">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th>Evaluation Dimension</th>
+                <th class="col-chadbox">
+                  Chadbox
+                  <span class="matrix-winner-chip">RECOMMENDED</span>
+                </th>
+                <th>Piston</th>
+                <th>Judge0</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Isolation Primitive</strong></td>
+                <td class="col-chadbox">Direct cgroups v2 + Seccomp + Namespaces</td>
+                <td>Isolate / Docker daemon</td>
+                <td>Isolate sandbox layer</td>
+              </tr>
+              <tr>
+                <td><strong>Runtime Mount</strong></td>
+                <td class="col-chadbox">Immutable SquashFS (RO loop mounts)</td>
+                <td>Directory copies into containers</td>
+                <td>Host tarball extractions</td>
+              </tr>
+              <tr>
+                <td><strong>External Dependencies</strong></td>
+                <td class="col-chadbox"><strong>Zero</strong> (Single container)</td>
+                <td>Docker socket / host access</td>
+                <td>PostgreSQL + Redis + Workers</td>
+              </tr>
+              <tr>
+                <td><strong>Warm Startup Overhead</strong></td>
+                <td class="col-chadbox"><strong>&lt; 14ms</strong></td>
+                <td>~65ms - 110ms</td>
+                <td>~85ms - 180ms</td>
+              </tr>
+              <tr>
+                <td><strong>Multi-file Payloads</strong></td>
+                <td class="col-chadbox">Native JSON tree in memory</td>
+                <td>Tarball archive wrapper</td>
+                <td>Base64 encoded entries</td>
+              </tr>
+              <tr>
+                <td><strong>Deployment Footprint</strong></td>
+                <td class="col-chadbox">1 Docker image (~180MB)</td>
+                <td>Engine + packages container</td>
+                <td>4+ Docker Compose services</td>
+              </tr>
+              <tr>
+                <td><strong>Memory Overhead</strong></td>
+                <td class="col-chadbox">~42 MB Idle RAM</td>
+                <td>~210 MB Idle</td>
+                <td>~650 MB Idle (DB + Queue)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Ecosystem & Runtime Grid -->
+    <section id="runtimes">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-tag">Supported Ecosystem</div>
+          <h2 class="section-title">Pre-Warmed Language Images</h2>
+          <p class="section-subtitle">
+            Instantaneous execution across all major compiled and interpreted runtimes.
+          </p>
+        </div>
+
+        <div class="runtime-grid">
+          <!-- Python -->
+          <div class="glow-card runtime-card reveal" data-runtime="python">
+            <div class="runtime-top">
+              <span class="runtime-name">Python</span>
+              <span class="runtime-version">v3.12.3</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Full standard library with scientific stack (NumPy, SciPy pre-bundled).
+            </p>
+            <div class="runtime-meta">
+              <span class="warmup-badge">
+                <span class="pulse-dot" style="width: 5px; height: 5px;"></span>
+                Warmup: ~12ms
+              </span>
+              <span style="color: var(--text-dim);">LRU Cached</span>
+            </div>
+          </div>
+
+          <!-- Node.js -->
+          <div class="glow-card runtime-card reveal" data-runtime="node">
+            <div class="runtime-top">
+              <span class="runtime-name">Node.js</span>
+              <span class="runtime-version">v22.2.0</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+              V8 isolate runtime supporting modern ES modules and Fetch API.
+            </p>
+            <div class="runtime-meta">
+              <span class="warmup-badge">
+                <span class="pulse-dot" style="width: 5px; height: 5px;"></span>
+                Warmup: ~18ms
+              </span>
+              <span style="color: var(--text-dim);">LRU Cached</span>
+            </div>
+          </div>
+
+          <!-- Go -->
+          <div class="glow-card runtime-card reveal" data-runtime="go">
+            <div class="runtime-top">
+              <span class="runtime-name">Go</span>
+              <span class="runtime-version">v1.22.4</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Lightning-fast compilation to isolated static native binaries.
+            </p>
+            <div class="runtime-meta">
+              <span class="warmup-badge">
+                <span class="pulse-dot" style="width: 5px; height: 5px;"></span>
+                Warmup: ~24ms
+              </span>
+              <span style="color: var(--text-dim);">LRU Cached</span>
+            </div>
+          </div>
+
+          <!-- Rust -->
+          <div class="glow-card runtime-card reveal" data-runtime="rust">
+            <div class="runtime-top">
+              <span class="runtime-name">Rust</span>
+              <span class="runtime-version">v1.78.0</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Sandboxed rustc compiler with optimized target cache.
+            </p>
+            <div class="runtime-meta">
+              <span class="warmup-badge">
+                <span class="pulse-dot" style="width: 5px; height: 5px;"></span>
+                Warmup: ~32ms
+              </span>
+              <span style="color: var(--text-dim);">LRU Cached</span>
+            </div>
+          </div>
+
+          <!-- C / C++ -->
+          <div class="glow-card runtime-card reveal" data-runtime="cpp">
+            <div class="runtime-top">
+              <span class="runtime-name">C / C++</span>
+              <span class="runtime-version">Clang 18.1</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Modern C++23 flags with AddressSanitizer and UndefinedBehaviorSanitizer.
+            </p>
+            <div class="runtime-meta">
+              <span class="warmup-badge">
+                <span class="pulse-dot" style="width: 5px; height: 5px;"></span>
+                Warmup: ~19ms
+              </span>
+              <span style="color: var(--text-dim);">LRU Cached</span>
+            </div>
+          </div>
+
+          <!-- Java -->
+          <div class="glow-card runtime-card reveal" data-runtime="java">
+            <div class="runtime-top">
+              <span class="runtime-name">Java</span>
+              <span class="runtime-version">OpenJDK 21 LTS</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+              HotSpot JVM tuned with aggressive tiered compilation limits.
+            </p>
+            <div class="runtime-meta">
+              <span class="warmup-badge">
+                <span class="pulse-dot" style="width: 5px; height: 5px;"></span>
+                Warmup: ~42ms
+              </span>
+              <span style="color: var(--text-dim);">LRU Cached</span>
+            </div>
+          </div>
+
+          <!-- Bash -->
+          <div class="glow-card runtime-card reveal" data-runtime="bash">
+            <div class="runtime-top">
+              <span class="runtime-name">Bash</span>
+              <span class="runtime-version">v5.2.26</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Restricted POSIX shell environment with coreutils utility suite.
+            </p>
+            <div class="runtime-meta">
+              <span class="warmup-badge">
+                <span class="pulse-dot" style="width: 5px; height: 5px;"></span>
+                Warmup: ~6ms
+              </span>
+              <span style="color: var(--text-dim);">LRU Cached</span>
+            </div>
+          </div>
+
+          <!-- Custom Extensions -->
+          <div class="glow-card runtime-card reveal" data-runtime="custom">
+            <div class="runtime-top">
+              <span class="runtime-name">Custom Bundle</span>
+              <span class="runtime-version">BYO SquashFS</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Package any custom runtime, proprietary SDK, or specific interpreter image.
+            </p>
+            <div class="runtime-meta">
+              <span class="warmup-badge" style="color: var(--accent-mint);">
+                Zero Config
+              </span>
+              <span style="color: var(--text-dim);">Extensible</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Tiered Pricing Model -->
+    <section id="pricing">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-tag">Predictable Plans</div>
+          <h2 class="section-title">Transparent Pricing</h2>
+          <p class="section-subtitle">
+            Start completely free on your own infrastructure, or scale effortlessly with our global cloud API.
+          </p>
+        </div>
+
+        <div class="pricing-toggle-wrap reveal">
+          <span class="toggle-label" id="monthlyLabel" style="color: var(--text-primary);">Monthly billing</span>
+          <button type="button" class="toggle-switch" id="billingToggleBtn" aria-label="Toggle annual billing" role="switch" aria-checked="false">
+            <span class="toggle-knob"></span>
+          </button>
+          <span class="toggle-label" id="annualLabel">Annual billing</span>
+          <span class="save-badge">Save 20%</span>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Tier 1: Open Source -->
+          <div class="glow-card pricing-card reveal">
+            <h3 class="tier-name">Open Source</h3>
+            <p class="tier-desc">Free forever for personal servers, internal tools, and on-premises clusters.</p>
+            <div class="tier-price">
+              <span class="price-amount">$0</span>
+              <span class="price-period">/ forever</span>
+            </div>
+            <ul class="tier-features">
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Full access to AGPLv3 engine source</span>
+              </li>
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Direct Linux cgroup v2 control</span>
+              </li>
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Unlimited local executions</span>
+              </li>
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Community Discord support</span>
+              </li>
+            </ul>
+            <a href="https://github.com/chadbox/chadbox" target="_blank" rel="noopener noreferrer" class="btn-matte-glass pricing-btn">
+              Deploy Self-Hosted
+            </a>
+          </div>
+
+          <!-- Tier 2: Developer Cloud (Featured) -->
+          <div class="glow-card pricing-card featured reveal">
+            <span class="popular-badge">Most Popular</span>
+            <h3 class="tier-name">Developer Cloud</h3>
+            <p class="tier-desc">Zero maintenance cloud API for production applications, agents, and apps.</p>
+            <div class="tier-price">
+              <span class="price-amount" id="cloudPriceAmount">$29</span>
+              <span class="price-period" id="cloudPricePeriod">/ month</span>
+            </div>
+            <ul class="tier-features">
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>100,000 executions included / month</span>
+              </li>
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>12 Global edge execution regions</span>
+              </li>
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Sub-40ms warm startup guarantee</span>
+              </li>
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>API token budgeting &amp; webhooks</span>
+              </li>
+            </ul>
+            <button type="button" class="btn-primary-gradient pricing-btn" id="pricingCloudBtn">
+              Start Cloud Free Trial
+            </button>
+          </div>
+
+          <!-- Tier 3: Enterprise / Custom -->
+          <div class="glow-card pricing-card reveal">
+            <h3 class="tier-name">Enterprise</h3>
+            <p class="tier-desc">Dedicated bare-metal fleets, custom kernel configurations, and strict SLAs.</p>
+            <div class="tier-price">
+              <span class="price-amount">Custom</span>
+              <span class="price-period">/ volume</span>
+            </div>
+            <ul class="tier-features">
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Dedicated single-tenant bare-metal nodes</span>
+              </li>
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Custom SquashFS image pipeline</span>
+              </li>
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>SOC2 Type II compliance reports</span>
+              </li>
+              <li class="tier-feature-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>99.99% uptime SLA &amp; dedicated Slack</span>
+              </li>
+            </ul>
+            <button type="button" class="btn-matte-glass pricing-btn" id="enterpriseContactBtn">
+              Contact Engineering
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Technical FAQ & Developer Support -->
+    <section id="faq">
+      <div class="container">
+        <div class="section-header reveal">
+          <div class="section-tag">Developer FAQ</div>
+          <h2 class="section-title">Technical Questions Answered</h2>
+          <p class="section-subtitle">
+            Details on kernel boundaries, memory quotas, network enforcement, and security architecture.
+          </p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item reveal">
+            <button type="button" class="faq-question">
+              <span>How does Chadbox prevent container escapes with untrusted code?</span>
+              <span class="faq-indicator">+</span>
+            </button>
+            <div class="faq-answer">
+              Chadbox enforces multi-layered defense-in-depth: separate mount, PID, network, IPC, and UTS Linux namespaces, coupled with a strict seccomp BPF filter that disallows all dangerous syscalls (including ptrace, bpf, mount, reboot, and raw socket creation). Runtimes are mounted read-only via SquashFS, and writes are restricted to an isolated memory-backed scratch tmpfs with strict size caps.
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button type="button" class="faq-question">
+              <span>Why does Chadbox not require Redis, Postgres, or queue workers?</span>
+              <span class="faq-indicator">+</span>
+            </button>
+            <div class="faq-answer">
+              Chadbox is intentionally engineered as a clean synchronous/streaming execution engine. Instead of buffering tasks into an external broker and causing network round-trip hops, it uses high-efficiency lock-free internal worker rings. This eliminates external points of failure, cuts idle memory to under 45MB, and drops execution dispatch overhead to sub-millisecond levels.
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button type="button" class="faq-question">
+              <span>Can untrusted code access the public Internet or local networks?</span>
+              <span class="faq-indicator">+</span>
+            </button>
+            <div class="faq-answer">
+              By default, all network namespaces are completely isolated with loopback only (network: false), rendering outbound LAN and WAN traffic physically impossible for the sandbox process. If explicit network access is required, you can enable outbound-only egress routing with DNS filtering.
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button type="button" class="faq-question">
+              <span>How does memory limit enforcement (OOM) work under load?</span>
+              <span class="faq-indicator">+</span>
+            </button>
+            <div class="faq-answer">
+              Chadbox programs cgroup v2 <code>memory.max</code> directly on the child namespace. If an untrusted script allocates beyond the specified quota (e.g., 128MB), the Linux kernel OOM killer terminates the child process with a precise SIGKILL signal in under 1 millisecond, without impacting the host engine or any neighboring executions.
+            </div>
+          </div>
+
+          <div class="faq-item reveal">
+            <button type="button" class="faq-question">
+              <span>How do I build and register a custom language runtime bundle?</span>
+              <span class="faq-indicator">+</span>
+            </button>
+            <div class="faq-answer">
+              You can assemble any directory containing your interpreter binary and standard libraries, then run <code>mksquashfs ./runtime ./bundle.sqfs -comp zstd</code>. Place the generated SquashFS file into Chadbox's <code>/runtimes</code> mount point; the engine will immediately detect, index, and cache it for execution.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 10. Minimalist Dark Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo" style="margin-bottom: 0.5rem;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="3" y="3" width="18" height="18" rx="4" />
+              <path d="m8 10 3 2-3 2" />
+              <path d="M13 14h3" />
+            </svg>
+            <span>CHADBOX</span>
+          </div>
+          <p>
+            Zero-overhead, hyper-secure untrusted code execution engine. Open-source core with a globally distributed managed cloud API.
+          </p>
+          <div class="status-indicator">
+            <span class="pulse-dot"></span>
+            <span>All Systems Operational</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Product</h4>
+          <ul class="footer-links">
+            <li><a href="#dual-track" class="footer-link">Docker Engine</a></li>
+            <li><a href="#architecture" class="footer-link">Execution Lifecycle</a></li>
+            <li><a href="#runtimes" class="footer-link">Language Catalog</a></li>
+            <li><a href="#pricing" class="footer-link">Cloud Pricing</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Resources</h4>
+          <ul class="footer-links">
+            <li><a href="https://github.com/chadbox/chadbox" class="footer-link" target="_blank">Documentation</a></li>
+            <li><a href="https://github.com/chadbox/chadbox/releases" class="footer-link" target="_blank">Release Notes (v1.0)</a></li>
+            <li><a href="#comparison" class="footer-link">Architecture Matrix</a></li>
+            <li><a href="#faq" class="footer-link">Security Whitepaper</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Community</h4>
+          <ul class="footer-links">
+            <li><a href="https://github.com/chadbox/chadbox" class="footer-link" target="_blank">GitHub Repository</a></li>
+            <li><a href="https://discord.gg" class="footer-link" target="_blank">Discord Community</a></li>
+            <li><a href="https://x.com" class="footer-link" target="_blank">Developer Twitter / X</a></li>
+            <li><a href="mailto:support@chadbox.io" class="footer-link">Security Disclosure</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 Chadbox Technologies Inc. Built for resilient developer infrastructure.</span>
+        <span>AGPLv3 Open Source Core &bull; ISO/IEC 27001 Ready</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Get API Key Modal Dialog -->
+  <div class="modal-backdrop" id="apiKeyModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close modal">&times;</button>
+      <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem;">
+        <span class="pulse-dot"></span>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--terminal-green);">INSTANT ACCESS</span>
+      </div>
+      <h3 id="modalTitle" style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.6rem;">Generate Test API Key</h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        Get an immediate sandbox key loaded with 500 free test executions. No credit card required.
+      </p>
+
+      <div class="snippet-box" style="margin-bottom: 1.5rem;">
+        <div class="snippet-top">
+          <span>YOUR LIVE API TOKEN</span>
+          <button type="button" class="copy-btn" id="modalCopyTokenBtn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+            </svg>
+            <span>Copy Key</span>
+          </button>
+        </div>
+        <pre class="snippet-code" id="modalTokenField" style="color: var(--accent-mint); font-weight: 600;">cb_live_e94c8b217a94f6c0</pre>
+      </div>
+
+      <div class="snippet-box" style="margin-bottom: 1.5rem;">
+        <div class="snippet-top">
+          <span>QUICK CURL VERIFICATION</span>
+        </div>
+        <pre class="snippet-code" style="font-size: 0.74rem;">curl -X POST https://api.chadbox.io/v1/execute \
+  -H "Authorization: Bearer cb_live_e94c8b217a94f6c0" \
+  -H "Content-Type: application/json" \
+  -d '{"language":"python","files":[{"name":"main.py","content":"print(1+1)"}]}'</pre>
+      </div>
+
+      <button type="button" class="btn-primary-gradient" style="width: 100%; justify-content: center;" id="modalDoneBtn">
+        <span>Done &amp; Explore API Docs</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toastNotice" role="status" aria-live="polite">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--accent-mint);">
+      <path d="M20 6 9 17l-5-5"/>
+    </svg>
+    <span id="toastMessage">Copied to clipboard</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
