@@ -2,10 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import Table from 'cli-table3';
 import bytes from 'bytes';
+import { config } from '@chadbox/shared';
 import { logger } from '../utils/logger.js';
 import { getLanguageManifest } from '../registry/index.js';
 
-const LANGUAGES_DIR = '/app/languages';
+const LANGUAGES_DIR = config.mounts.storageDir;
 const REGISTRY_PATH = path.join(process.cwd(), 'src/registry/manifest.json');
 
 export async function listCommand() {

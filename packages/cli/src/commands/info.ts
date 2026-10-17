@@ -1,9 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import bytes from 'bytes';
+import { config } from '@chadbox/shared';
 import { logger } from '../utils/logger.js';
 
-const LANGUAGES_DIR = '/app/languages';
+const LANGUAGES_DIR = config.mounts.storageDir;
 
 export async function infoCommand(lang: string) {
     const jsonPath = path.join(LANGUAGES_DIR, `${lang}.json`);

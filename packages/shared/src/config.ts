@@ -23,32 +23,37 @@ const nullableListSchema = z
     ])
     .nullable();
 
-export const ConcurrencyConfigSchema = z.object({
-    /**
-     * Soft concurrency baseline before memory capacity checks engage.
-     */
-    safeBaseline: z.coerce.number().int().positive().default(5),
-    /**
-     * Maximum number of requests allowed in the waiting queue before returning HTTP 429.
-     */
-    maxQueueDepth: z.coerce.number().int().positive().default(50),
-    /**
-     * Minimum free host RAM (in MB) required to spawn new sandboxes.
-     */
-    panicMemoryMb: z.coerce.number().int().positive().default(100),
-    /**
-     * Starting Box ID for isolate sandbox sandboxes.
-     */
-    boxPoolMin: z.coerce.number().int().nonnegative().default(1),
-    /**
-     * Ending Box ID for isolate sandbox sandboxes.
-     */
-    boxPoolMax: z.coerce.number().int().positive().default(1000),
-    /**
-     * Milliseconds to throttle/cache os.freemem checks to prevent event-loop stalls.
-     */
-    memoryPollIntervalMs: z.coerce.number().int().positive().default(500),
-});
+export const ConcurrencyConfigSchema = z
+    .object({
+        /**
+         * Soft concurrency baseline before memory capacity checks engage.
+         */
+        safeBaseline: z.coerce.number().int().positive().default(5),
+        /**
+         * Maximum number of requests allowed in the waiting queue before returning HTTP 429.
+         */
+        maxQueueDepth: z.coerce.number().int().positive().default(50),
+        /**
+         * Minimum free host RAM (in MB) required to spawn new sandboxes.
+         */
+        panicMemoryMb: z.coerce.number().int().positive().default(100),
+        /**
+         * Starting Box ID for isolate sandbox sandboxes.
+         */
+        boxPoolMin: z.coerce.number().int().nonnegative().default(1),
+        /**
+         * Ending Box ID for isolate sandbox sandboxes.
+         */
+        boxPoolMax: z.coerce.number().int().positive().default(1000),
+        /**
+         * Milliseconds to throttle/cache os.freemem checks to prevent event-loop stalls.
+         */
+        memoryPollIntervalMs: z.coerce.number().int().positive().default(500),
+    })
+    .refine((config) => config.boxPoolMin <= config.boxPoolMax, {
+        message: 'Box pool minimum must not exceed its maximum.',
+        path: ['boxPoolMin'],
+    });
 
 export const MountsConfigSchema = z.object({
     /**
@@ -92,16 +97,25 @@ export const AccessConfigSchema = z.object({
     disabledLanguages: listSchema.default([]),
 });
 
-export const CeilingsConfigSchema = z.object({
-    defaultCompileTimeoutMs: z.coerce.number().int().positive().default(10000),
-    maxCompileTimeoutMs: z.coerce.number().int().positive().default(13000),
-    defaultRunTimeoutMs: z.coerce.number().int().positive().default(3000),
-    maxRunTimeoutMs: z.coerce.number().int().positive().default(10000),
-    defaultCompileMemoryKb: z.coerce.number().int().positive().default(512000),
-    maxCompileMemoryKb: z.coerce.number().int().positive().default(1024000),
-    defaultRunMemoryKb: z.coerce.number().int().positive().default(128000),
-    maxRunMemoryKb: z.coerce.number().int().positive().default(512000),
-});
+export const CeilingsConfigSchema = z
+    .object({
+        defaultCompileTimeoutMs: z.coerce.number().int().positive().default(10000),
+        maxCompileTimeoutMs: z.coerce.number().int().positive().default(13000),
+        defaultRunTimeoutMs: z.coerce.number().int().positive().default(3000),
+        maxRunTimeoutMs: z.coerce.number().int().positive().default(10000),
+        defaultCompileMemoryKb: z.coerce.number().int().positive().default(512000),
+        maxCompileMemoryKb: z.coerce.number().int().positive().default(1024000),
+        defaultRunMemoryKb: z.coerce.number().int().positive().default(128000),
+        maxRunMemoryKb: z.coerce.number().int().positive().default(512000),
+    })
+    .refine(
+        (config) =>
+            config.defaultCompileTimeoutMs <= config.maxCompileTimeoutMs &&
+            config.defaultRunTimeoutMs <= config.maxRunTimeoutMs &&
+            config.defaultCompileMemoryKb <= config.maxCompileMemoryKb &&
+            config.defaultRunMemoryKb <= config.maxRunMemoryKb,
+        { message: 'Default ceilings must not exceed their maximum values.' }
+    );
 
 export const SandboxLimitsConfigSchema = z.object({
     /**

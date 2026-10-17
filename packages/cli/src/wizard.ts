@@ -2,6 +2,7 @@ import { intro, outro, select, isCancel, cancel } from '@clack/prompts';
 import pc from 'picocolors';
 import fs from 'fs';
 import path from 'path';
+import { config } from '@chadbox/shared';
 import { installCommand } from './commands/install.js';
 import { uninstallCommand } from './commands/uninstall.js';
 import { listCommand } from './commands/list.js';
@@ -81,7 +82,7 @@ export async function startWizard() {
         await installCommand(lang as string);
     } else if (action === 'uninstall') {
         const installed = Object.keys(registry).filter((key) =>
-            fs.existsSync(`/app/languages/${key}.sqsh`)
+            fs.existsSync(path.join(config.mounts.storageDir, `${key}.sqsh`))
         );
         if (installed.length === 0) {
             console.log(pc.yellow('⚠ No environments currently installed.'));

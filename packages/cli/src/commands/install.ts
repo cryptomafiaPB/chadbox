@@ -5,11 +5,12 @@ import fs from 'fs/promises';
 import path from 'path';
 import { spinner } from '@clack/prompts';
 import pc from 'picocolors';
+import { config } from '@chadbox/shared';
 import { getLanguageManifest } from '../registry/index.js';
 import { verifyDownloadedArchiveChecksum } from './install-security.js';
 
 const execAsync = promisify(exec);
-const LANGUAGES_DIR = '/app/languages';
+const LANGUAGES_DIR = config.mounts.storageDir;
 
 export async function installCommand(langArg: string) {
     const [lang, versionArg] = langArg.split('@');
