@@ -1,5 +1,6 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
+import { config } from '@chadbox/shared';
 import Table from 'cli-table3';
 import { logger } from '../utils/logger.js';
 
@@ -51,11 +52,11 @@ export async function healthCommand() {
     // Check Permissions
     let permStatus = logger.pc.green('✔ OK');
     try {
-        fs.accessSync('/app/languages', fs.constants.W_OK);
+        fs.accessSync(config.mounts.storageDir, fs.constants.W_OK);
     } catch {
         permStatus = logger.pc.red('✖ No Write Access');
     }
-    table.push(['Permissions', permStatus, '/app/languages']);
+    table.push(['Permissions', permStatus, config.mounts.storageDir]);
 
     // Check wget
     const wgetVer = checkCommand('wget --version');

@@ -1,7 +1,7 @@
 import { exec, spawn } from 'child_process';
 import fs from 'fs/promises';
 import path from 'path';
-import type { StageResult } from '@chadbox/shared';
+import { config, type StageResult } from '@chadbox/shared';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
@@ -118,8 +118,9 @@ export class Sandbox {
         const safeRead = async (file: string) => {
             try {
                 const buffer = await fs.readFile(file);
-                return buffer.length > 65535
-                    ? buffer.toString('utf8', 0, 65535) + '\n...[Output Truncated]'
+                return buffer.length > config.sandbox.maxOutputBytes
+                    ? buffer.toString('utf8', 0, config.sandbox.maxOutputBytes) +
+                          '\n...[Output Truncated]'
                     : buffer.toString('utf8');
             } catch {
                 return '';

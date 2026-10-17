@@ -1,17 +1,19 @@
 import Fastify from 'fastify';
 import fs from 'fs/promises';
 import path from 'path';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
-import { ExecutionRequestSchema } from '@chadbox/shared';
+import {
+    config,
+    ExecutionRequestSchema,
+    isLanguagePermitted,
+    resolveExecutionFileName,
+} from '@chadbox/shared';
 import { Sandbox, KernelManager } from '@chadbox/core';
 import { pool } from './pool.js';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 const fastify = Fastify({ logger: true });
-
-const MAX_MOUNTS = parseInt(process.env.CHADBOX_MAX_MOUNTS || '10', 10);
-const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
 
 interface CacheEntry {
     promise: Promise<void>;
@@ -38,7 +40,7 @@ async function ensureGlobalMount(language: string, sqshPath: string) {
     }
 
     // LRU Eviction: If we hit the server limit, unmount the oldest unused language
-    if (globalMountCache.size >= MAX_MOUNTS) {
+    if (globalMountCache.size >= config.mounts.maxMounts) {
         let oldestLangToEvict: string | null = null;
         for (const [lang, entry] of globalMountCache.entries()) {
             if (entry.activeRefs === 0) {
@@ -57,14 +59,19 @@ async function ensureGlobalMount(language: string, sqshPath: string) {
 
     // Create the Mount Promise
     const mountPromise = (async () => {
-        const globalMountPath = path.join('/app/languages/mounts', language);
+        const globalMountPath = path.join(config.mounts.mountsDir, language);
         await fs.mkdir(globalMountPath, { recursive: true });
         try {
-            await execAsync(`umount ${globalMountPath} 2>/dev/null`);
+            await execFileAsync('umount', [globalMountPath]);
         } catch (e) {
             // Ignore unmount errors (e.g., if it wasn't mounted)
         }
-        await execAsync(`mount -o loop,ro,exec,nosuid,nodev ${sqshPath} ${globalMountPath}`);
+        await execFileAsync('mount', [
+            '-o',
+            'loop,ro,exec,nosuid,nodev',
+            sqshPath,
+            globalMountPath,
+        ]);
         fastify.log.info(`💿 Mounted ${language} into VFS Cache.`);
     })();
 
@@ -79,7 +86,7 @@ async function forceUnmount(language: string) {
 
     globalMountCache.delete(language); // Immediately remove from routing
     try {
-        await execAsync(`umount /app/languages/mounts/${language}`);
+        await execFileAsync('umount', [path.join(config.mounts.mountsDir, language)]);
         fastify.log.info(`🧹 Evicted ${language} from VFS Cache.`);
     } catch (e) {
         // Ignore unmount errors (e.g., if it wasn't mounted)
@@ -89,16 +96,12 @@ async function forceUnmount(language: string) {
     }
 }
 
-// TTL Sweeper: Runs every 5 minutes to clean idle mounts
-setInterval(
-    () => {
-        const cutoff = Date.now() - IDLE_TIMEOUT_MS;
-        for (const [lang, entry] of globalMountCache.entries()) {
-            if (entry.lastAccessed < cutoff && entry.activeRefs === 0) forceUnmount(lang);
-        }
-    },
-    5 * 60 * 1000
-);
+setInterval(() => {
+    const cutoff = Date.now() - config.mounts.idleTimeoutMs;
+    for (const [lang, entry] of globalMountCache.entries()) {
+        if (entry.lastAccessed < cutoff && entry.activeRefs === 0) forceUnmount(lang);
+    }
+}, config.mounts.sweeperIntervalMs);
 
 fastify.post('/api/v1/execute', async (request, reply) => {
     const parsed = ExecutionRequestSchema.safeParse(request.body);
@@ -111,8 +114,13 @@ fastify.post('/api/v1/execute', async (request, reply) => {
         return reply.status(400).send({ error: 'Invalid language identifier.' });
     }
 
-    const langJsonPath = path.join('/app/languages', `${payload.language}.json`);
-    const sqshPath = path.join('/app/languages', `${payload.language}.sqsh`);
+    const access = isLanguagePermitted(payload.language, config.access);
+    if (!access.permitted) {
+        return reply.status(403).send({ error: access.reason });
+    }
+
+    const langJsonPath = path.join(config.mounts.storageDir, `${payload.language}.json`);
+    const sqshPath = path.join(config.mounts.storageDir, `${payload.language}.sqsh`);
     let langMeta: any;
 
     try {
@@ -143,29 +151,20 @@ fastify.post('/api/v1/execute', async (request, reply) => {
             mounts: [
                 {
                     dest: `/opt/${payload.language}`,
-                    src: path.join('/app/languages/mounts', payload.language),
+                    src: path.join(config.mounts.mountsDir, payload.language),
                 },
             ],
         });
 
         await sandbox.init();
 
-        const fileNames: string[] = [];
-        for (let i = 0; i < payload.files.length; i++) {
-            const file = payload.files[i];
-            let fname = file?.name;
-            if (!fname) {
-                if (payload.language === 'java') {
-                    fname = 'Main.java';
-                } else if (payload.language === 'sql') {
-                    fname = i === 0 ? 'main.sql' : `file${i}.sql`;
-                } else {
-                    fname = i === 0 ? 'main' : `file${i}`;
-                }
-            }
-
-            fileNames.push(fname);
-            await sandbox.writeCode(fname, file!.content);
+        const filesToWrite = payload.files.map((file, index) => ({
+            fileName: resolveExecutionFileName(payload.language, file, index),
+            content: file.content,
+        }));
+        const fileNames = filesToWrite.map(({ fileName }) => fileName);
+        for (const file of filesToWrite) {
+            await sandbox.writeCode(file.fileName, file.content);
         }
 
         // write STDIN to a disk (even if empty) for sandbox
@@ -190,8 +189,8 @@ fastify.post('/api/v1/execute', async (request, reply) => {
                 stage: 'compile',
                 timeLimit: payload.compile_timeout / 1000,
                 memoryLimit: payload.compile_memory_limit,
-                processes: 256, // Compilers need to spawn many threads to build ASTs
-                fsize: 51200, // 50MB quota for heavy compiled binaries
+                processes: config.sandbox.maxProcessesCompile,
+                fsize: config.sandbox.maxFsizeCompileKb,
                 env: langMeta.env, // Pass environment variables
             });
 
@@ -221,9 +220,9 @@ fastify.post('/api/v1/execute', async (request, reply) => {
         const runResult = await sandbox.run(runCmd, {
             stage: 'run',
             timeLimit: payload.run_timeout / 1000,
-            memoryLimit: payload.run_memory_limit > 0 ? payload.run_memory_limit : 256000,
-            processes: 64, // Restrict threads to prevent Fork Bombs
-            fsize: 10240, // 10MB file quota
+            memoryLimit: payload.run_memory_limit,
+            processes: config.sandbox.maxProcessesRun,
+            fsize: config.sandbox.maxFsizeRunKb,
             env: langMeta.env, // Pass environment variables
         });
 
@@ -245,7 +244,7 @@ fastify.post('/api/v1/execute', async (request, reply) => {
 
         if (boxId !== undefined) {
             try {
-                await execAsync(`isolate --cleanup --cg --box-id=${boxId}`);
+                await execFileAsync('isolate', ['--cleanup', '--cg', `--box-id=${boxId}`]);
             } catch (cleanupError) {
                 fastify.log.error({ err: cleanupError }, `Failed to cleanup box ${boxId}`);
             } finally {
@@ -267,7 +266,7 @@ const shutdown = async () => {
     fastify.log.info('SIGTERM received. Sweeping Mounts...');
     for (const lang of globalMountCache.keys()) {
         try {
-            await execAsync(`umount /app/languages/mounts/${lang}`);
+            await execFileAsync('umount', [path.join(config.mounts.mountsDir, lang)]);
         } catch (e) {
             fastify.log.error(`Failed to unmount ${lang}: ${e}`);
         }
@@ -282,8 +281,15 @@ process.on('SIGTERM', shutdown);
 const start = async () => {
     try {
         fastify.log.info('🧹 Running Pre-Flight Sweep...');
-        await execAsync(`umount -l /app/languages/mounts/* 2>/dev/null`).catch(() => {});
-        await execAsync(`rm -rf /app/languages/mounts/* 2>/dev/null`).catch(() => {});
+        await fs.mkdir(config.mounts.mountsDir, { recursive: true });
+        const mountEntries = await fs.readdir(config.mounts.mountsDir);
+        await Promise.all(
+            mountEntries.map((entry) =>
+                execFileAsync('umount', ['-l', path.join(config.mounts.mountsDir, entry)]).catch(
+                    () => {}
+                )
+            )
+        );
 
         await KernelManager.bootstrapCgroups();
         await fastify.listen({ port: 3000, host: '0.0.0.0' });

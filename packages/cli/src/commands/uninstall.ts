@@ -1,9 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import { config } from '@chadbox/shared';
 import { logger } from '../utils/logger.js';
 import { spinner } from '@clack/prompts';
 
-const LANGUAGES_DIR = '/app/languages';
+const LANGUAGES_DIR = config.mounts.storageDir;
 
 export async function uninstallCommand(langArg: string) {
     const [lang] = langArg.split('@');
