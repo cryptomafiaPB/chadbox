@@ -169,7 +169,14 @@
             "system": {
                 "url": "system",
                 "compile_cmd": null,
-                "run_cmd": ["/usr/bin/sqlite3", "-bail", "-batch", "-init", "{main_file}", "/box/db.sqlite"]
+                "run_cmd": [
+                    "/usr/bin/sqlite3",
+                    "-bail",
+                    "-batch",
+                    "-init",
+                    "{main_file}",
+                    "/box/db.sqlite"
+                ]
             }
         }
     }
