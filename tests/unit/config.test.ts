@@ -100,6 +100,13 @@ describe('Centralized Configuration System', () => {
             }).success,
             false
         );
+        assert.equal(
+            ExecutionRequestSchema.safeParse({
+                ...request,
+                files: [{ name: '.', content: '' }],
+            }).success,
+            false
+        );
         for (const name of [
             'stdin.txt',
             'compile_stdout.txt',

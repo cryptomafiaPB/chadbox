@@ -22,6 +22,9 @@ export const SafeFileNameSchema = z
     .refine((name) => !/(^|[/\\])\.\.([/\\]|$)/.test(name), {
         message: 'Filename must not contain path traversal segments (..)',
     })
+    .refine((name) => name !== '.', {
+        message: 'Filename must not be a current-directory reference',
+    })
     .refine((name) => !/[/\\]/.test(name), {
         message: 'Filename must not contain directory separators',
     })
