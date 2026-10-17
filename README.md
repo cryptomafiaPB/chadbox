@@ -166,6 +166,7 @@ Feel free to request new languages on the [Issues](https://github.com/cryptomafi
 | [![My Skills](https://skillicons.dev/icons?i=bash)](https://skillicons.dev)       | Bash              | system            | No       |
 | [![My Skills](https://skillicons.dev/icons?i=typescript)](https://skillicons.dev) | TypeScript (Deno) | 1.41.3            | No       |
 | [![My Skills](https://skillicons.dev/icons?i=ruby)](https://skillicons.dev)       | Ruby              | 3.3.0             | No       |
+| 🗄️                                                                                | SQL (SQLite)      | system            | No       |
 
 > **Adding/Install a language** is done via the `chad install <language>` CLI command, which downloads, compiles, and packages the runtime into a SquashFS bundle. See [CLI Reference](#-cli-reference).
 
@@ -224,6 +225,30 @@ curl -s -X POST http://localhost:3000/api/v1/execute \
 }
 ```
 
+### SQL payload example
+
+```bash
+curl -s -X POST http://localhost:3000/api/v1/execute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "language": "sql",
+    "version": "system",
+    "files": [
+      {
+        "name": "main.sql",
+        "content": "CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT);\nINSERT INTO users(name) VALUES (\"alice\"), (\"bob\");\nSELECT * FROM users ORDER BY id;"
+      }
+    ]
+  }' | jq
+```
+
+Expected `run.stdout`:
+
+```text
+1|alice
+2|bob
+```
+
 ### 4. Access the CLI
 
 ```bash
@@ -243,17 +268,17 @@ Execute code in an isolated sandbox.
 
 #### Request Body
 
-| Field                  | Type       | Required | Default    | Description                                            |
-| ---------------------- | ---------- | -------- | ---------- | ------------------------------------------------------ |
-| `language`             | `string`   | ✅       | —          | Language identifier (e.g. `python3`, `nodejs`, `rust`) |
-| `version`              | `string`   | ✅       | `"latest"` | Version string for the runtime                         |
-| `files`                | `File[]`   | ✅       | —          | Array of files to execute (min 1)                      |
-| `stdin`                | `string`   | —        | `""`       | Standard input piped to the program                    |
-| `args`                 | `string[]` | —        | `[]`       | Runtime arguments passed to the program                |
-| `compile_timeout`      | `number`   | —        | `10000`    | Max compile time in ms (ceiling: 13000)                |
-| `compile_memory_limit` | `number`   | —        | `512000`   | Max compile memory in KB (ceiling: 1024000)            |
-| `run_timeout`          | `number`   | —        | `3000`     | Max execution time in ms (ceiling: 10000)              |
-| `run_memory_limit`     | `number`   | —        | `128000`   | Max execution memory in KB (ceiling: 512000)           |
+| Field                  | Type       | Required | Default    | Description                                                   |
+| ---------------------- | ---------- | -------- | ---------- | ------------------------------------------------------------- |
+| `language`             | `string`   | ✅       | —          | Language identifier (e.g. `python3`, `nodejs`, `rust`, `sql`) |
+| `version`              | `string`   | ✅       | `"latest"` | Version string for the runtime                                |
+| `files`                | `File[]`   | ✅       | —          | Array of files to execute (min 1)                             |
+| `stdin`                | `string`   | —        | `""`       | Standard input piped to the program                           |
+| `args`                 | `string[]` | —        | `[]`       | Runtime arguments passed to the program                       |
+| `compile_timeout`      | `number`   | —        | `10000`    | Max compile time in ms (ceiling: 13000)                       |
+| `compile_memory_limit` | `number`   | —        | `512000`   | Max compile memory in KB (ceiling: 1024000)                   |
+| `run_timeout`          | `number`   | —        | `3000`     | Max execution time in ms (ceiling: 10000)                     |
+| `run_memory_limit`     | `number`   | —        | `128000`   | Max execution memory in KB (ceiling: 512000)                  |
 
 **File Object:**
 
