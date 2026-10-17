@@ -161,5 +161,16 @@
                 "run_cmd": ["/opt/ruby/bin/ruby", "{files}"]
             }
         }
+    },
+    "sql": {
+        "name": "SQL (SQLite)",
+        "default_version": "system",
+        "versions": {
+            "system": {
+                "url": "system",
+                "compile_cmd": null,
+                "run_cmd": ["/usr/bin/sqlite3", "-batch", "-init", "{main_file}", "/box/db.sqlite"]
+            }
+        }
     }
 }
