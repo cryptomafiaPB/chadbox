@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl wget squashfs-tools tar unzip bzip2 xz-utils zstd build-essential libcap-dev libseccomp-dev pkg-config \
-    libsystemd-dev git uidmap tini \
+    libsystemd-dev git uidmap tini sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create the isolate user (required for user namespaces)

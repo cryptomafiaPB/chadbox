@@ -44,7 +44,10 @@ export function resolveExecutionFileName(
     file: { name?: string | undefined },
     index: number
 ): string {
-    return file.name ?? (language === 'java' ? 'Main.java' : index === 0 ? 'main' : `file${index}`);
+    if (file.name) return file.name;
+    if (language === 'java') return 'Main.java';
+    if (language === 'sql') return index === 0 ? 'main.sql' : `file${index}.sql`;
+    return index === 0 ? 'main' : `file${index}`;
 }
 
 // payload POST /api/v1/execute route will accept.

@@ -6,6 +6,7 @@ import {
     ExecutionRequestSchema,
     loadConfig,
     isLanguagePermitted,
+    resolveExecutionFileName,
 } from '@chadbox/shared';
 
 describe('Centralized Configuration System', () => {
@@ -132,6 +133,11 @@ describe('Centralized Configuration System', () => {
             }).success,
             false
         );
+    });
+
+    test('uses SQL-specific filenames for unnamed input files', () => {
+        assert.equal(resolveExecutionFileName('sql', {}, 0), 'main.sql');
+        assert.equal(resolveExecutionFileName('sql', {}, 1), 'file1.sql');
     });
 
     test('validates access control permissions', () => {

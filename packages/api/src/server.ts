@@ -170,9 +170,15 @@ fastify.post('/api/v1/execute', async (request, reply) => {
         // write STDIN to a disk (even if empty) for sandbox
         await sandbox.writeCode('stdin.txt', payload.stdin || '');
 
-        // Safely map the {files} token to the actual filenames
+        const mainFileName = fileNames[0] ?? 'main';
+
+        // Safely map command tokens to the generated sandbox file names.
         const parseCmd = (cmd: string[]) =>
-            cmd.flatMap((arg) => (arg === '{files}' ? fileNames : [arg]));
+            cmd.flatMap((arg) => {
+                if (arg === '{files}') return fileNames;
+                if (arg === '{main_file}') return [mainFileName];
+                return [arg];
+            });
 
         let compileResult: any = undefined;
 
