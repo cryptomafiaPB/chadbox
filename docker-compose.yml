@@ -28,6 +28,12 @@ services:
             '
         ports:
             - '3000:3000'
+        healthcheck:
+            test: ['CMD', 'curl', '--fail', '--silent', 'http://localhost:3000/readyz']
+            interval: 60s
+            timeout: 5s
+            retries: 2
+            start_period: 3m
 
 volumes:
     chadbox_root_node_modules:

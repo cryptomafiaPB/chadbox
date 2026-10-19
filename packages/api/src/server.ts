@@ -12,6 +12,7 @@ const fastify = Fastify({ logger: true });
 
 const MAX_MOUNTS = parseInt(process.env.CHADBOX_MAX_MOUNTS || '10', 10);
 const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
+const startTime = Date.now();
 
 interface CacheEntry {
     promise: Promise<void>;
@@ -21,6 +22,45 @@ interface CacheEntry {
 
 // JavaScript Maps preserve insertion order.
 const globalMountCache = new Map<string, CacheEntry>();
+
+const LIVEZ_RESPONSE = { status: 'ok' };
+
+fastify.get('/livez', async () => LIVEZ_RESPONSE);
+
+fastify.get('/readyz', async (_request, reply) => {
+    const checks: Record<string, 'ok' | 'unavailable'> = {
+        cgroups: 'unavailable',
+        isolate: 'unavailable',
+    };
+
+    try {
+        const cgroupPath = (await fs.readFile('/run/isolate/cgroup', 'utf8')).trim();
+        const controllers = (
+            await fs.readFile(path.join(cgroupPath, 'cgroup.subtree_control'), 'utf8')
+        )
+            .trim()
+            .split(/\s+/);
+        if (['memory', 'pids'].every((controller) => controllers.includes(controller))) {
+            checks.cgroups = 'ok';
+        }
+    } catch {
+        // Missing cgroup setup means sandbox execution is not ready.
+    }
+
+    try {
+        await execAsync('isolate --version', { timeout: 2000 });
+        checks.isolate = 'ok';
+    } catch {
+        // Keep command output and host details out of the public health response.
+    }
+
+    const ready = Object.values(checks).every((status) => status === 'ok');
+    return reply.status(ready ? 200 : 503).send({
+        status: ready ? 'ok' : 'not_ready',
+        uptime_seconds: Math.floor((Date.now() - startTime) / 1000),
+        checks,
+    });
+});
 
 async function ensureGlobalMount(language: string, sqshPath: string) {
     const now = Date.now();

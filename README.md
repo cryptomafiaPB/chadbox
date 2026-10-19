@@ -262,6 +262,30 @@ chad health     # Validate system requirements
 
 ## 📡 API Reference
 
+### `GET /livez` and `GET /readyz`
+
+`/livez` checks whether the API process can respond. It returns `200` with `{"status":"ok"}`. `/readyz` checks that the required cgroup v2 controllers (`memory` and `pids`) and `isolate` are available. It returns `200` when ready or `503` otherwise. Docker Compose uses `/readyz` for the container healthcheck.
+
+Ready response (`200`):
+
+```json
+{
+    "status": "ok",
+    "uptime_seconds": 123,
+    "checks": {
+        "cgroups": "ok",
+        "isolate": "ok"
+    }
+}
+```
+
+Not-ready response (`503`) uses the same shape, with `"status": "not_ready"` and each failed check set to `"unavailable"`.
+
+```bash
+curl -i http://localhost:3000/livez
+curl -i http://localhost:3000/readyz
+```
+
 ### `POST /api/v1/execute`
 
 Execute code in an isolated sandbox.
